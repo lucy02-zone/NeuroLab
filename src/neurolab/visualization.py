@@ -109,6 +109,48 @@ def plot_loss_history(history: dict[str, list[int | float]]) -> plt.Figure:
     return figure
 
 
+def plot_optimizer_history(runs: dict[str, object], metric: str, title: str) -> plt.Figure:
+    """Compare one recorded per-epoch metric across optimizer training runs."""
+    if not runs:
+        raise ValueError("At least one optimizer result is required.")
+    figure, axis = plt.subplots(figsize=(8.0, 4.3), facecolor=NAVY)
+    _style_axis(axis, title)
+    colors = {"SGD": BLUE, "Momentum": CYAN, "Adam": VIOLET}
+    for name, result in runs.items():
+        history = result.history
+        epochs = np.asarray(history.get("epoch", []), dtype=int)
+        values = history.get(metric)
+        if epochs.size == 0 or values is None or len(values) != epochs.size:
+            raise ValueError(f"{name} history does not contain matching values for {metric!r}.")
+        axis.plot(epochs, values, linewidth=2.2, color=colors.get(name, BLUE), label=name)
+    axis.set_xlabel("Epoch")
+    axis.set_ylabel("Accuracy" if "accuracy" in metric else "Loss")
+    axis.legend(facecolor="#141f30", edgecolor=GRID, labelcolor=TEXT)
+    figure.tight_layout()
+    return figure
+
+
+def plot_optimizer_final_accuracy(runs: dict[str, object]) -> plt.Figure:
+    """Compare final train and validation accuracy recorded by each run."""
+    if not runs or any("training_accuracy" not in result.history for result in runs.values()):
+        raise ValueError("Classification accuracy is unavailable for one or more optimizer results.")
+    names = list(runs)
+    positions = np.arange(len(names))
+    width = 0.36
+    training = [runs[name].history["training_accuracy"][-1] for name in names]
+    validation = [runs[name].history["validation_accuracy"][-1] for name in names]
+    figure, axis = plt.subplots(figsize=(8.0, 4.0), facecolor=NAVY)
+    _style_axis(axis, "Final classification accuracy")
+    axis.bar(positions - width / 2, training, width, color=BLUE, label="Training")
+    axis.bar(positions + width / 2, validation, width, color=CYAN, label="Validation")
+    axis.set_xticks(positions, names, color=MUTED)
+    axis.set_ylim(0.0, 1.0)
+    axis.set_ylabel("Accuracy")
+    axis.legend(facecolor="#141f30", edgecolor=GRID, labelcolor=TEXT)
+    figure.tight_layout()
+    return figure
+
+
 def plot_decision_boundary(
     network: NeuralNetwork,
     features: np.ndarray,

@@ -6,6 +6,7 @@ from src.neurolab.dashboard import render_dashboard
 from src.neurolab.activation_playground import render_activation_playground
 from src.neurolab.loss_playground import render_loss_playground
 from src.neurolab.network_playground import render_network_playground
+from src.neurolab.optimizer_lab import render_optimizer_lab
 from src.neurolab.navigation import NAVIGATION, render_placeholder
 from src.neurolab.theme import apply_theme
 
@@ -42,5 +43,7 @@ elif selected == "Loss Functions":
     render_loss_playground()
 elif selected == "Network Playground":
     render_network_playground()
+elif selected == "Optimizer Lab":
+    render_optimizer_lab()
 else:
     render_placeholder(selected)
