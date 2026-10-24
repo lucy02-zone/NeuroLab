@@ -9,6 +9,7 @@ def test_navigation_contains_requested_sections():
         "Dashboard",
         "Network Playground",
         "Activation Functions",
+        "Loss Functions",
         "Optimizer Lab",
         "Backpropagation Explorer",
         "Experiments & Reports",

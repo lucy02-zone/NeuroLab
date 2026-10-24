@@ -7,6 +7,7 @@ NAVIGATION = (
     "Dashboard",
     "Network Playground",
     "Activation Functions",
+    "Loss Functions",
     "Optimizer Lab",
     "Backpropagation Explorer",
     "Experiments & Reports",
