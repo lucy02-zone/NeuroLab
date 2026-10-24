@@ -4,3 +4,6 @@ __pycache__/
 .pytest_cache/
 .env
 .streamlit/secrets.toml
+data/experiments.sqlite3
+data/experiments.sqlite3-shm
+data/experiments.sqlite3-wal

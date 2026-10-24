@@ -8,6 +8,7 @@ from src.neurolab.backpropagation_explorer import render_backpropagation_explore
 from src.neurolab.loss_playground import render_loss_playground
 from src.neurolab.network_playground import render_network_playground
 from src.neurolab.optimizer_lab import render_optimizer_lab
+from src.neurolab.experiments_reports import render_experiments_reports
 from src.neurolab.navigation import NAVIGATION, render_placeholder
 from src.neurolab.theme import apply_theme
 
@@ -48,5 +49,7 @@ elif selected == "Optimizer Lab":
     render_optimizer_lab()
 elif selected == "Backpropagation Explorer":
     render_backpropagation_explorer()
+elif selected == "Experiments & Reports":
+    render_experiments_reports()
 else:
     render_placeholder(selected)

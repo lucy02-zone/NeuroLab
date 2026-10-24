@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 from .datasets import make_classification_dataset
+from .experiment_ui import render_save_experiment_control
 from .optimizer_comparison import OPTIMIZERS, OptimizerComparison, run_optimizer_comparison
 from .visualization import (
     plot_dataset_preview,
@@ -138,7 +139,14 @@ def render_optimizer_lab() -> None:
                     "configuration": {
                         "epochs": int(epochs), "batch_size": int(batch_size), "learning_rate": float(learning_rate),
                         "hidden_layer_sizes": tuple(int(value) for value in sizes), "activation": activation_label,
-                        "seed": seed,
+                        "hidden_activation": ACTIVATIONS[activation_label], "seed": seed,
+                        "loss": "binary_cross_entropy", "output_activation": "sigmoid",
+                        "epochs_completed": {name: result.epochs_completed for name, result in comparison.runs.items()},
+                    },
+                    "dataset_configuration": {
+                        "n_samples": int(sample_count), "noise": float(noise),
+                        "validation_fraction": float(validation_fraction), "data_seed": seed,
+                        "split_seed": seed, "standardize": True,
                     },
                 }
                 st.success(f"Comparison run {run_number} completed.")
@@ -170,3 +178,32 @@ def render_optimizer_lab() -> None:
     )
     boundary.axes[0].set_title(f"{boundary_optimizer} · learned decision boundary", loc="left", color="#eaf1ff", fontsize=12, pad=12)
     _show_figure(boundary)
+    save_candidates = {}
+    for name, result in comparison.runs.items():
+        run_config = {
+            **saved["configuration"],
+            "optimizer": name,
+            "learning_rate": float(result.optimizer.learning_rate),
+            "batch_size": saved["configuration"]["batch_size"],
+            "epochs_requested": saved["configuration"]["epochs"],
+            "epochs_completed": result.epochs_completed,
+            "optimizer_config": _optimizer_configuration(result.optimizer),
+        }
+        save_candidates[name] = {
+            "dataset": saved["dataset_name"],
+            "dataset_configuration": saved["dataset_configuration"],
+            "configuration": run_config,
+            "history": result.history,
+        }
+    render_save_experiment_control(save_candidates, key="optimizer_lab")
+
+
+def _optimizer_configuration(optimizer: object) -> dict[str, float | int | str]:
+    """Describe the selected optimizer without persisting its mutable state."""
+    values: dict[str, float | int | str] = {
+        "type": type(optimizer).__name__, "learning_rate": float(optimizer.learning_rate)
+    }
+    for attribute in ("momentum", "beta1", "beta2", "epsilon"):
+        if hasattr(optimizer, attribute):
+            values[attribute] = getattr(optimizer, attribute)
+    return values

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 from src.neurolab.datasets import make_classification_dataset, split_classification_data
+from src.neurolab.experiment_ui import render_save_experiment_control
 from src.neurolab.training import TrainingResult, train_model
 from src.neurolab.visualization import (
     plot_dataset_preview,
@@ -175,6 +176,17 @@ def render_network_playground() -> None:
                     "validation_fraction": float(validation_fraction),
                     "seed": int(random_seed),
                     "loss": loss_label,
+                    "epochs_completed": result.epochs_completed,
+                    "output_activation": "sigmoid",
+                    "optimizer_config": _optimizer_configuration(result.optimizer),
+                },
+                "dataset_configuration": {
+                    "n_samples": int(sample_count),
+                    "noise": float(noise),
+                    "validation_fraction": float(validation_fraction),
+                    "data_seed": int(random_seed),
+                    "split_seed": int(random_seed),
+                    "standardize": True,
                 },
             }
             st.success(f"Training run {run_number} completed.")
@@ -215,3 +227,33 @@ def render_network_playground() -> None:
         scaler=saved_run["scaler"],
     )
     _show_figure(boundary_figure)
+
+    config = saved_run["config"]
+    save_configuration = {
+        **config,
+        "hidden_activation": config["hidden_activation"],
+        "optimizer": config["optimizer"],
+        "learning_rate": config["learning_rate"],
+        "batch_size": config["batch_size"],
+        "epochs_requested": config["epochs_requested"],
+        "loss": "binary_cross_entropy",
+        "random_seed": config["seed"],
+    }
+    render_save_experiment_control({
+        f"Run {saved_run['run_number']}": {
+            "dataset": saved_run["dataset_name"],
+            "dataset_configuration": saved_run["dataset_configuration"],
+            "configuration": save_configuration,
+            "history": result.history,
+        }
+    }, key="network_playground")
+
+
+def _optimizer_configuration(optimizer: object) -> dict[str, float | int | str]:
+    """Describe optimizer settings without persisting optimizer state or objects."""
+    values: dict[str, float | int | str] = {"type": type(optimizer).__name__,
+                                            "learning_rate": float(optimizer.learning_rate)}
+    for attribute in ("momentum", "beta1", "beta2", "epsilon"):
+        if hasattr(optimizer, attribute):
+            values[attribute] = getattr(optimizer, attribute)
+    return values
