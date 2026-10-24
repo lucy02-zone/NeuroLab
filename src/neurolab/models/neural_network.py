@@ -4,7 +4,17 @@ from collections.abc import Sequence
 
 import numpy as np
 
-from .activations import leaky_relu, relu, sigmoid, tanh
+from . import losses
+from .activations import (
+    leaky_relu,
+    leaky_relu_derivative,
+    relu,
+    relu_derivative,
+    sigmoid,
+    sigmoid_derivative,
+    tanh,
+    tanh_derivative,
+)
 
 
 HIDDEN_ACTIVATIONS = {
@@ -129,3 +139,105 @@ class NeuralNetwork:
             self.activations.append(current)
 
         return current.T.copy()
+
+    def backward(self, targets: np.ndarray, loss: str = "binary_cross_entropy") -> dict[str, object]:
+        """Calculate loss gradients without changing parameters.
+
+        The loss derivatives already include their documented averaging
+        factor. Since cached arrays are column-oriented ``(units, samples)``,
+        this method sums ``dZ`` over the batch when forming ``dW`` and ``db``;
+        it must not divide those gradients by the batch size again.
+
+        Args:
+            targets: Values matching the most recent forward output. For a
+                one-output network, a batch vector of shape ``(n_samples,)``
+                is also accepted.
+            loss: ``binary_cross_entropy``, ``mean_squared_error``, or
+                ``mean_absolute_error``. Categorical cross-entropy is not
+                supported because this network's output is sigmoid, not
+                softmax.
+
+        Returns:
+            A dictionary containing loss, weight and bias gradients, and
+            their per-layer L2 norms. Also stores it as ``self.gradients``.
+        """
+        if not self.activations or not self.weighted_sums:
+            raise RuntimeError("Call forward() before backward() so layer values are cached.")
+
+        targets_array = self._prepare_targets(targets)
+        predictions = self.activations[-1].T
+        loss_functions = {
+            "binary_cross_entropy": (losses.binary_cross_entropy, losses.binary_cross_entropy_derivative),
+            "bce": (losses.binary_cross_entropy, losses.binary_cross_entropy_derivative),
+            "mean_squared_error": (losses.mean_squared_error, losses.mean_squared_error_derivative),
+            "mse": (losses.mean_squared_error, losses.mean_squared_error_derivative),
+            "mean_absolute_error": (losses.mean_absolute_error, losses.mean_absolute_error_derivative),
+            "mae": (losses.mean_absolute_error, losses.mean_absolute_error_derivative),
+        }
+        if loss not in loss_functions:
+            supported = "binary_cross_entropy, mean_squared_error, mean_absolute_error"
+            raise ValueError(f"Unsupported loss {loss!r}; choose one of: {supported}.")
+        loss_function, loss_derivative = loss_functions[loss]
+        loss_value = loss_function(targets_array, predictions)
+
+        # BCE + sigmoid has dL/dZ = (prediction - target) / n_elements.
+        # This combines the BCE probability derivative with the sigmoid
+        # derivative algebraically, while retaining BCE's elementwise mean.
+        if loss in ("binary_cross_entropy", "bce"):
+            delta = (predictions - targets_array).T / predictions.size
+        else:
+            d_loss_d_output = loss_derivative(targets_array, predictions).T
+            output_values = self.activations[-1]
+            delta = d_loss_d_output * sigmoid_derivative(
+                self.weighted_sums[-1], activation_output=output_values
+            )
+
+        weight_gradients: list[np.ndarray] = [np.empty_like(weight) for weight in self.weights]
+        bias_gradients: list[np.ndarray] = [np.empty_like(bias) for bias in self.biases]
+        for layer_index in range(len(self.weights) - 1, -1, -1):
+            previous_activation = self.activations[layer_index]
+            # The loss derivative's averaging factor is already in delta.
+            weight_gradients[layer_index] = delta @ previous_activation.T
+            bias_gradients[layer_index] = np.sum(delta, axis=1, keepdims=True)
+
+            if layer_index > 0:
+                d_activation = self.weights[layer_index].T @ delta
+                z_previous = self.weighted_sums[layer_index - 1]
+                activation_output = self.activations[layer_index]
+                if self.hidden_activation == "relu":
+                    derivative = relu_derivative(z_previous)
+                elif self.hidden_activation == "leaky_relu":
+                    derivative = leaky_relu_derivative(z_previous)
+                elif self.hidden_activation == "sigmoid":
+                    derivative = sigmoid_derivative(z_previous, activation_output=activation_output)
+                else:
+                    derivative = tanh_derivative(z_previous, activation_output=activation_output)
+                delta = d_activation * derivative
+
+        self.gradients = {
+            "loss": float(loss_value),
+            "loss_name": loss,
+            "weight_gradients": weight_gradients,
+            "bias_gradients": bias_gradients,
+            "weight_norms": [float(np.linalg.norm(gradient)) for gradient in weight_gradients],
+            "bias_norms": [float(np.linalg.norm(gradient)) for gradient in bias_gradients],
+        }
+        self.weight_gradients = weight_gradients
+        self.bias_gradients = bias_gradients
+        return self.gradients
+
+    def _prepare_targets(self, targets: np.ndarray) -> np.ndarray:
+        """Validate targets against the batch cached by the latest forward pass."""
+        values = np.asarray(targets, dtype=float)
+        sample_count = self.activations[0].shape[1]
+        expected_shape = (sample_count, self.output_size)
+        if values.ndim == 1:
+            if self.output_size == 1 and values.shape[0] == sample_count:
+                values = values.reshape(sample_count, 1)
+            elif sample_count == 1 and values.shape[0] == self.output_size:
+                values = values.reshape(1, self.output_size)
+        if values.shape != expected_shape:
+            raise ValueError(f"Targets must have shape {expected_shape}; got {values.shape}.")
+        if not np.all(np.isfinite(values)):
+            raise ValueError("Targets must contain only finite values.")
+        return values
