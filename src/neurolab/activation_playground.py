@@ -30,16 +30,16 @@ DERIVATIVES = {
 
 
 def _style_axis(axis: plt.Axes, title: str) -> None:
-    axis.set_title(title, loc="left", color="#eaf1ff", fontsize=12, pad=12)
-    axis.set_facecolor("#101827")
-    axis.tick_params(colors="#8b9bb2", labelsize=9)
-    axis.xaxis.label.set_color("#8b9bb2")
-    axis.yaxis.label.set_color("#8b9bb2")
+    axis.set_title(title, loc="left", color="#35102f", fontsize=12, pad=12)
+    axis.set_facecolor("#ffffff")
+    axis.tick_params(colors="#716675", labelsize=9)
+    axis.xaxis.label.set_color("#716675")
+    axis.yaxis.label.set_color("#716675")
     for spine in axis.spines.values():
-        spine.set_color("#26364b")
-    axis.grid(color="#26364b", linewidth=0.7, alpha=0.65)
-    axis.axhline(0, color="#54657c", linewidth=0.8)
-    axis.axvline(0, color="#54657c", linewidth=0.8)
+        spine.set_color("#c2c8d2")
+    axis.grid(color="#c2c8d2", linewidth=0.7, alpha=0.65)
+    axis.axhline(0, color="#9a8998", linewidth=0.8)
+    axis.axvline(0, color="#9a8998", linewidth=0.8)
 
 
 def render_activation_playground() -> None:
@@ -88,11 +88,11 @@ def render_activation_playground() -> None:
 
     plot_col, derivative_col = st.columns(2, gap="medium")
     with plot_col:
-        figure, axis = plt.subplots(figsize=(7.0, 4.0), facecolor="#101827")
+        figure, axis = plt.subplots(figsize=(7.0, 4.0), facecolor="#ffffff")
         _style_axis(axis, selected_label)
-        color = "#39d5e7" if selected in ("Softmax", "Leaky ReLU") else "#6e91ff"
+        color = "#65405f" if selected in ("Softmax", "Leaky ReLU") else "#35102f"
         axis.plot(x_values, curve_y, color=color, linewidth=2.6)
-        axis.scatter([point], [point_output[0] if selected == "Softmax" else point_output], color="#b18cff", s=42, zorder=4)
+        axis.scatter([point], [point_output[0] if selected == "Softmax" else point_output], color="#a88fa6", s=42, zorder=4)
         axis.set_xlabel("Input x")
         axis.set_ylabel("Output")
         figure.tight_layout()
@@ -108,10 +108,10 @@ def render_activation_playground() -> None:
                 unsafe_allow_html=True,
             )
         else:
-            figure, axis = plt.subplots(figsize=(7.0, 4.0), facecolor="#101827")
+            figure, axis = plt.subplots(figsize=(7.0, 4.0), facecolor="#ffffff")
             _style_axis(axis, f"Derivative of {selected}")
-            axis.plot(x_values, selected_derivative, color="#b18cff", linewidth=2.6)
-            axis.scatter([point], [derivative_output], color="#39d5e7", s=42, zorder=4)
+            axis.plot(x_values, selected_derivative, color="#a88fa6", linewidth=2.6)
+            axis.scatter([point], [derivative_output], color="#65405f", s=42, zorder=4)
             axis.set_xlabel("Input x")
             axis.set_ylabel("Derivative")
             figure.tight_layout()
@@ -129,20 +129,20 @@ def render_activation_playground() -> None:
     with explanation_col:
         st.markdown(
             f'<section class="info-panel"><div class="eyebrow">FUNCTION GUIDE</div><h2>{selected}</h2>'
-            f'<p><b style="color:#dce8ff">Output range:</b> {output_range}</p>'
+            f'<p><b style="color:#35102f">Output range:</b> {output_range}</p>'
             f'<p>{use_case}</p></section>',
             unsafe_allow_html=True,
         )
 
     with st.expander("Compare activation curves"):
-        figure, axis = plt.subplots(figsize=(11.0, 4.8), facecolor="#101827")
+        figure, axis = plt.subplots(figsize=(11.0, 4.8), facecolor="#ffffff")
         _style_axis(axis, "Elementwise activation comparison")
         for name, function in CURVES.items():
             values = function(x_values, alpha=alpha) if name == "Leaky ReLU" else function(x_values)
             axis.plot(x_values, values, linewidth=2.1, label=name)
         axis.set_xlabel("Input x")
         axis.set_ylabel("Output")
-        axis.legend(facecolor="#141f30", edgecolor="#26364b", labelcolor="#dce8ff", ncol=4)
+        axis.legend(facecolor="#f4f5f8", edgecolor="#c2c8d2", labelcolor="#35102f", ncol=4)
         figure.tight_layout()
         st.pyplot(figure, use_container_width=True)
         plt.close(figure)

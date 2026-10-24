@@ -176,7 +176,7 @@ def render_optimizer_lab() -> None:
     boundary = plot_decision_boundary(
         result.network, comparison.features, comparison.labels, scaler=comparison.split.scaler
     )
-    boundary.axes[0].set_title(f"{boundary_optimizer} · learned decision boundary", loc="left", color="#eaf1ff", fontsize=12, pad=12)
+    boundary.axes[0].set_title(f"{boundary_optimizer} · learned decision boundary", loc="left", color="#35102f", fontsize=12, pad=12)
     _show_figure(boundary)
     save_candidates = {}
     for name, result in comparison.runs.items():

@@ -32,7 +32,7 @@ def _history_figure(records: list[dict[str, object]], metric: str, title: str) -
     for spine in axis.spines.values():
         spine.set_color(GRID)
     axis.grid(color=GRID, linewidth=0.65, alpha=0.55)
-    axis.legend(facecolor="#141f30", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 

@@ -8,13 +8,13 @@ from matplotlib.patches import Circle
 from src.neurolab.models import NeuralNetwork
 
 
-NAVY = "#101827"
-BLUE = "#648cff"
-CYAN = "#39d5e7"
-VIOLET = "#b18cff"
-TEXT = "#eaf1ff"
-MUTED = "#8b9bb2"
-GRID = "#26364b"
+NAVY = "#ffffff"
+BLUE = "#35102f"
+CYAN = "#65405f"
+VIOLET = "#a88fa6"
+TEXT = "#35102f"
+MUTED = "#716675"
+GRID = "#c2c8d2"
 
 
 def _style_axis(axis: plt.Axes, title: str) -> None:
@@ -37,10 +37,10 @@ def plot_dataset_preview(features: np.ndarray, labels: np.ndarray, title: str = 
         mask = y == class_index
         if np.any(mask):
             axis.scatter(X[mask, 0], X[mask, 1], s=25, c=color, label=label,
-                         edgecolors="#dce8ff55", linewidths=0.35, alpha=0.88)
+                         edgecolors="#ffffff", linewidths=0.35, alpha=0.88)
     axis.set_xlabel("Feature 1")
     axis.set_ylabel("Feature 2")
-    axis.legend(facecolor="#141f30", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 
@@ -66,16 +66,16 @@ def plot_network_architecture(
     for layer_index in range(len(positions) - 1):
         for x1, y1 in positions[layer_index]:
             for x2, y2 in positions[layer_index + 1]:
-                axis.plot([x1, x2], [y1, y2], color="#516b91", alpha=0.3, linewidth=0.75, zorder=1)
+                axis.plot([x1, x2], [y1, y2], color="#9a8998", alpha=0.3, linewidth=0.75, zorder=1)
 
     for layer_index, layer_positions in enumerate(positions):
         color = BLUE if layer_index == 0 else CYAN if layer_index == len(positions) - 1 else VIOLET
         for neuron_index, (x_coord, y_coord) in enumerate(layer_positions):
             radius = min(0.032, 0.3 / max(1, largest_layer - 1))
-            axis.add_patch(Circle((x_coord, y_coord), radius, facecolor=color, edgecolor="#eaf1ff",
+            axis.add_patch(Circle((x_coord, y_coord), radius, facecolor=color, edgecolor="#ffffff",
                                   linewidth=0.8, zorder=3))
             if layer_index == 0:
-                axis.text(x_coord, y_coord, f"x{neuron_index + 1}", color=TEXT, fontsize=7,
+                axis.text(x_coord, y_coord, f"x{neuron_index + 1}", color="#ffffff", fontsize=7,
                           ha="center", va="center", zorder=4)
     for index, (x_coord, size) in enumerate(zip(layer_x, layer_sizes)):
         label = "Input" if index == 0 else "Output · sigmoid" if index == len(layer_sizes) - 1 else f"Hidden · {hidden_activation}"
@@ -104,7 +104,7 @@ def plot_loss_history(history: dict[str, list[int | float]]) -> plt.Figure:
         axis.plot(epochs, validation, color=CYAN, linewidth=2.1, label="Validation loss")
     axis.set_xlabel("Epoch")
     axis.set_ylabel("Loss")
-    axis.legend(facecolor="#141f30", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 
@@ -125,7 +125,7 @@ def plot_optimizer_history(runs: dict[str, object], metric: str, title: str) -> 
         axis.plot(epochs, values, linewidth=2.2, color=colors.get(name, BLUE), label=name)
     axis.set_xlabel("Epoch")
     axis.set_ylabel("Accuracy" if "accuracy" in metric else "Loss")
-    axis.legend(facecolor="#141f30", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 
@@ -146,7 +146,7 @@ def plot_optimizer_final_accuracy(runs: dict[str, object]) -> plt.Figure:
     axis.set_xticks(positions, names, color=MUTED)
     axis.set_ylim(0.0, 1.0)
     axis.set_ylabel("Accuracy")
-    axis.legend(facecolor="#141f30", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 
@@ -179,16 +179,16 @@ def plot_decision_boundary(
     figure, axis = plt.subplots(figsize=(7.0, 5.0), facecolor=NAVY)
     axis.set_facecolor(NAVY)
     axis.contourf(grid_x, grid_y, regions, levels=(-0.5, 0.5, 1.5),
-                  cmap=ListedColormap(("#345fc766", "#159eae66")), alpha=0.72)
+                  cmap=ListedColormap(("#35102f28", "#8b6c8833")), alpha=0.72)
     _style_axis(axis, "Trained model decision boundary")
     for class_index, color, label in ((0, BLUE, "Class 0"), (1, CYAN, "Class 1")):
         mask = y == class_index
         if np.any(mask):
             axis.scatter(X[mask, 0], X[mask, 1], s=20, c=color, label=label,
-                         edgecolors="#f4f7ff", linewidths=0.4, alpha=0.93)
+                         edgecolors="#ffffff", linewidths=0.4, alpha=0.93)
     axis.set_xlabel("Feature 1")
     axis.set_ylabel("Feature 2")
-    axis.legend(facecolor="#141f30", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 

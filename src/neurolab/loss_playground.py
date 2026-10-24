@@ -17,26 +17,26 @@ LOSS_INFO = {
 
 
 def _style_axis(axis: plt.Axes, title: str) -> None:
-    axis.set_title(title, loc="left", color="#eaf1ff", fontsize=12, pad=12)
-    axis.set_facecolor("#101827")
-    axis.tick_params(colors="#8b9bb2", labelsize=9)
-    axis.xaxis.label.set_color("#8b9bb2")
-    axis.yaxis.label.set_color("#8b9bb2")
+    axis.set_title(title, loc="left", color="#35102f", fontsize=12, pad=12)
+    axis.set_facecolor("#ffffff")
+    axis.tick_params(colors="#716675", labelsize=9)
+    axis.xaxis.label.set_color("#716675")
+    axis.yaxis.label.set_color("#716675")
     for spine in axis.spines.values():
-        spine.set_color("#26364b")
-    axis.grid(color="#26364b", linewidth=0.7, alpha=0.65)
+        spine.set_color("#c2c8d2")
+    axis.grid(color="#c2c8d2", linewidth=0.7, alpha=0.65)
 
 
 def _plot(values: np.ndarray, curves: dict[str, np.ndarray], title: str, target: float | None = None) -> None:
-    figure, axis = plt.subplots(figsize=(9.5, 4.2), facecolor="#101827")
+    figure, axis = plt.subplots(figsize=(9.5, 4.2), facecolor="#ffffff")
     _style_axis(axis, title)
     for label, curve in curves.items():
         axis.plot(values, curve, linewidth=2.4, label=label)
     if target is not None:
-        axis.axvline(target, color="#b18cff", linestyle="--", linewidth=1.2, label="Target")
+        axis.axvline(target, color="#65405f", linestyle="--", linewidth=1.2, label="Target")
     axis.set_xlabel("Prediction" if target is not None else "Predicted probability")
     axis.set_ylabel("Loss")
-    axis.legend(facecolor="#141f30", edgecolor="#26364b", labelcolor="#dce8ff")
+    axis.legend(facecolor="#f4f5f8", edgecolor="#c2c8d2", labelcolor="#35102f")
     figure.tight_layout()
     st.pyplot(figure, width="stretch")
     plt.close(figure)
