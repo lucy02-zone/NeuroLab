@@ -46,7 +46,7 @@ def test_network_diagram_uses_initialized_forward_values():
 
 def test_streamlit_backprop_workflow_only_updates_on_explicit_request():
     app = AppTest.from_file(Path(__file__).resolve().parents[1] / "app.py", default_timeout=30).run()
-    app.radio[0].set_value("Backpropagation Explorer").run()
+    next(button for button in app.button if button.key == "nav_backpropagation_explorer").click().run()
     assert not app.exception
     assert [title.value for title in app.title] == ["Backpropagation Explorer"]
 

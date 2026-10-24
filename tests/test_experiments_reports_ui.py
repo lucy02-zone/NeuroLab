@@ -8,7 +8,7 @@ from src.neurolab.experiment_store import ExperimentStore
 def test_network_playground_can_save_a_completed_training_run(tmp_path, monkeypatch):
     monkeypatch.setenv("NEUROLAB_EXPERIMENT_DB", str(tmp_path / "network.sqlite3"))
     app = AppTest.from_file(Path(__file__).resolve().parents[1] / "app.py", default_timeout=30).run()
-    app.radio[0].set_value("Network Playground").run()
+    next(button for button in app.button if button.key == "nav_network_playground").click().run()
     _set_slider(app, "play_hidden_layer_count", 0)
     _set_number(app, "play_epochs", 1)
     _set_number(app, "play_batch_size", 20)
@@ -26,7 +26,7 @@ def test_network_playground_can_save_a_completed_training_run(tmp_path, monkeypa
 def test_optimizer_lab_can_save_a_real_optimizer_run(tmp_path, monkeypatch):
     monkeypatch.setenv("NEUROLAB_EXPERIMENT_DB", str(tmp_path / "optimizer.sqlite3"))
     app = AppTest.from_file(Path(__file__).resolve().parents[1] / "app.py", default_timeout=30).run()
-    app.radio[0].set_value("Optimizer Lab").run()
+    next(button for button in app.button if button.key == "nav_optimizer_lab").click().run()
     for widget in app.multiselect:
         if widget.key == "optimizer_selection":
             widget.set_value(["SGD"])
@@ -57,7 +57,7 @@ def test_reports_page_requires_explicit_delete_confirmation(tmp_path, monkeypatc
                  "training_accuracy": [0.6], "validation_accuracy": [0.5]},
     )
     app = AppTest.from_file(Path(__file__).resolve().parents[1] / "app.py", default_timeout=30).run()
-    app.radio[0].set_value("Experiments & Reports").run()
+    next(button for button in app.button if button.key == "nav_experiments_and_reports").click().run()
     assert not app.exception
     assert [title.value for title in app.title] == ["Experiments & Reports"]
     assert app.get("download_button")

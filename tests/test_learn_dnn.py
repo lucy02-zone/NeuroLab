@@ -47,7 +47,7 @@ def test_binary_classification_metrics_and_confusion_matrix():
 
 def test_every_learning_module_renders_and_correct_quiz_updates_session_progress():
     app = AppTest.from_file(Path(__file__).resolve().parents[1] / "app.py", default_timeout=30).run()
-    app.radio[0].set_value("Learn DNN").run()
+    next(button for button in app.button if button.key == "nav_learn_dnn").click().run()
     assert not app.exception
     assert [title.value for title in app.title] == ["Learn DNN"]
 

@@ -62,7 +62,7 @@ def test_optimizer_comparison_plot_uses_recorded_history():
 
 def test_optimizer_lab_runs_selected_subset_and_keeps_results_on_widget_rerun():
     app = AppTest.from_file(Path(__file__).resolve().parents[1] / "app.py", default_timeout=30).run()
-    app.radio[0].set_value("Optimizer Lab").run()
+    next(button for button in app.button if button.key == "nav_optimizer_lab").click().run()
     assert not app.exception
     assert [title.value for title in app.title] == ["Optimizer Lab"]
 
@@ -79,7 +79,7 @@ def test_optimizer_lab_runs_selected_subset_and_keeps_results_on_widget_rerun():
             widget.set_value(2)
         if widget.key == "optimizer_batch":
             widget.set_value(20)
-    app.button[0].click().run()
+    next(button for button in app.button if button.key == "optimizer_run").click().run()
 
     assert not app.exception
     saved = app.session_state["optimizer_lab_result"]

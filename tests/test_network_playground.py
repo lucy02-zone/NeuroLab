@@ -41,7 +41,7 @@ def test_visualization_helpers_return_figures_for_dataset_architecture_history_a
 
 def test_streamlit_page_renders_and_training_runs_replace_session_results():
     app = AppTest.from_file(Path(__file__).resolve().parents[1] / "app.py", default_timeout=30).run()
-    app.radio[0].set_value("Network Playground").run()
+    next(button for button in app.button if button.key == "nav_network_playground").click().run()
     assert not app.exception
     assert [title.value for title in app.title] == ["Network Playground"]
 
@@ -58,7 +58,7 @@ def test_streamlit_page_renders_and_training_runs_replace_session_results():
             widget.set_value(2)
         if widget.key == "play_batch_size":
             widget.set_value(20)
-    app.button[0].click().run()
+    next(button for button in app.button if button.key == "play_train_button").click().run()
 
     assert not app.exception
     first_run = app.session_state["network_playground_result"]
@@ -73,7 +73,7 @@ def test_streamlit_page_renders_and_training_runs_replace_session_results():
     for widget in app.number_input:
         if widget.key == "play_epochs":
             widget.set_value(1)
-    app.button[0].click().run()
+    next(button for button in app.button if button.key == "play_train_button").click().run()
 
     assert not app.exception
     second_run = app.session_state["network_playground_result"]

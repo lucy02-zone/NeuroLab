@@ -6,6 +6,7 @@ import streamlit as st
 NAVIGATION = (
     "Dashboard",
     "Network Playground",
+    "Network Visualizer",
     "Activation Functions",
     "Loss Functions",
     "Optimizer Lab",

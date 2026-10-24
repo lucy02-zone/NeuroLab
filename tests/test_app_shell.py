@@ -8,6 +8,7 @@ def test_navigation_contains_requested_sections():
     assert NAVIGATION == (
         "Dashboard",
         "Network Playground",
+        "Network Visualizer",
         "Activation Functions",
         "Loss Functions",
         "Optimizer Lab",
