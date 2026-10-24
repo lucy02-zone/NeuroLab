@@ -4,16 +4,25 @@ from collections.abc import Sequence
 
 import numpy as np
 
-from .activations import relu, sigmoid
+from .activations import leaky_relu, relu, sigmoid, tanh
+
+
+HIDDEN_ACTIVATIONS = {
+    "relu": relu,
+    "leaky_relu": leaky_relu,
+    "sigmoid": sigmoid,
+    "tanh": tanh,
+}
 
 
 class NeuralNetwork:
-    """Feedforward network with ReLU hidden layers and sigmoid outputs.
+    """Feedforward network with configurable hidden and sigmoid output layers.
 
     Inputs are provided as ``(n_samples, n_features)``. A single sample may be
     passed as ``(n_features,)``; in either case predictions have shape
-    ``(n_samples, output_size)``. Hidden-layer weights use He initialization,
-    which is suited to ReLU. The sigmoid output layer uses Xavier uniform
+    ``(n_samples, output_size)``. Hidden layers default to ReLU. ReLU and
+    Leaky ReLU use He initialization; sigmoid/tanh hidden layers use Xavier
+    initialization. The sigmoid output layer uses Xavier uniform
     initialization. Biases start at zero.
     """
 
@@ -23,6 +32,7 @@ class NeuralNetwork:
         hidden_layer_sizes: Sequence[int],
         output_size: int,
         random_seed: int | None = None,
+        hidden_activation: str = "relu",
     ) -> None:
         """Create a network with the requested layer widths.
 
@@ -31,6 +41,9 @@ class NeuralNetwork:
             hidden_layer_sizes: Width of each hidden layer; may be empty.
             output_size: Number of sigmoid output units.
             random_seed: Optional seed for reproducible parameters.
+            hidden_activation: Elementwise hidden activation. One of ``relu``,
+                ``leaky_relu``, ``sigmoid``, or ``tanh``. The output remains
+                sigmoid for binary classification.
 
         Raises:
             ValueError: If a layer width is not a positive integer.
@@ -41,15 +54,20 @@ class NeuralNetwork:
             for index, size in enumerate(hidden_layer_sizes)
         )
         self.output_size = self._validate_width(output_size, "output_size")
+        if hidden_activation not in HIDDEN_ACTIVATIONS:
+            choices = ", ".join(HIDDEN_ACTIVATIONS)
+            raise ValueError(f"hidden_activation must be one of: {choices}.")
+        self.hidden_activation = hidden_activation
         self.layer_sizes = (self.input_feature_count, *self.hidden_layer_sizes, self.output_size)
 
         rng = np.random.default_rng(random_seed)
         self.weights: list[np.ndarray] = []
         self.biases: list[np.ndarray] = []
         for layer_index, (fan_in, fan_out) in enumerate(zip(self.layer_sizes[:-1], self.layer_sizes[1:])):
-            if layer_index < len(self.hidden_layer_sizes):
-                # He normal: preserves activation scale through ReLU layers.
-                weight = rng.normal(0.0, np.sqrt(2.0 / fan_in), size=(fan_out, fan_in))
+            if layer_index < len(self.hidden_layer_sizes) and hidden_activation in ("relu", "leaky_relu"):
+                # He normal preserves activation scale for rectifier units.
+                variance_scale = 2.0 if hidden_activation == "relu" else 2.0 / (1.0 + 0.01**2)
+                weight = rng.normal(0.0, np.sqrt(variance_scale / fan_in), size=(fan_out, fan_in))
             else:
                 # Xavier uniform: balances scale for the sigmoid output layer.
                 limit = np.sqrt(6.0 / (fan_in + fan_out))
@@ -101,7 +119,12 @@ class NeuralNetwork:
 
         for index, (weight, bias) in enumerate(zip(self.weights, self.biases)):
             z_value = weight @ current + bias
-            current = relu(z_value) if index < len(self.hidden_layer_sizes) else sigmoid(z_value)
+            if index < len(self.hidden_layer_sizes):
+                activation = HIDDEN_ACTIVATIONS[self.hidden_activation]
+                current = activation(z_value)
+            else:
+                # Keep sigmoid output behavior for binary classification.
+                current = sigmoid(z_value)
             self.weighted_sums.append(z_value)
             self.activations.append(current)
 

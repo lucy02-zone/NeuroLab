@@ -3,6 +3,7 @@
 import streamlit as st
 
 from src.neurolab.dashboard import render_dashboard
+from src.neurolab.activation_playground import render_activation_playground
 from src.neurolab.navigation import NAVIGATION, render_placeholder
 from src.neurolab.theme import apply_theme
 
@@ -33,5 +34,7 @@ with st.sidebar:
 
 if selected == "Dashboard":
     render_dashboard()
+elif selected == "Activation Functions":
+    render_activation_playground()
 else:
     render_placeholder(selected)
