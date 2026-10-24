@@ -4,6 +4,7 @@ import streamlit as st
 
 from src.neurolab.dashboard import render_dashboard
 from src.neurolab.activation_playground import render_activation_playground
+from src.neurolab.backpropagation_explorer import render_backpropagation_explorer
 from src.neurolab.loss_playground import render_loss_playground
 from src.neurolab.network_playground import render_network_playground
 from src.neurolab.optimizer_lab import render_optimizer_lab
@@ -45,5 +46,7 @@ elif selected == "Network Playground":
     render_network_playground()
 elif selected == "Optimizer Lab":
     render_optimizer_lab()
+elif selected == "Backpropagation Explorer":
+    render_backpropagation_explorer()
 else:
     render_placeholder(selected)

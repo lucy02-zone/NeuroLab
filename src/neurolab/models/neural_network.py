@@ -196,24 +196,43 @@ class NeuralNetwork:
 
         weight_gradients: list[np.ndarray] = [np.empty_like(weight) for weight in self.weights]
         bias_gradients: list[np.ndarray] = [np.empty_like(bias) for bias in self.biases]
+        # Keep chain-rule intermediates in layer order and present them in the
+        # public sample-major layout ``(samples, units)`` for inspection.
+        activation_gradients: list[np.ndarray] = [np.empty_like(value.T) for value in self.weighted_sums]
+        activation_derivatives: list[np.ndarray] = [np.empty_like(value.T) for value in self.weighted_sums]
+        preactivation_gradients: list[np.ndarray] = [np.empty_like(value.T) for value in self.weighted_sums]
+        output_values = self.activations[-1]
+        activation_derivatives[-1] = np.asarray(
+            sigmoid_derivative(self.weighted_sums[-1], activation_output=output_values)
+        ).T.copy()
+        activation_gradients[-1] = loss_derivative(targets_array, predictions)
+        if loss in ("binary_cross_entropy", "bce"):
+            # BCE + sigmoid simplifies dL/dZ to (prediction-target)/n.
+            # It is algebraically dL/dA multiplied by the sigmoid derivative.
+            delta = (predictions - targets_array).T / predictions.size
+        else:
+            delta = activation_gradients[-1].T * activation_derivatives[-1].T
         for layer_index in range(len(self.weights) - 1, -1, -1):
+            preactivation_gradients[layer_index] = delta.T.copy()
             previous_activation = self.activations[layer_index]
             # The loss derivative's averaging factor is already in delta.
             weight_gradients[layer_index] = delta @ previous_activation.T
             bias_gradients[layer_index] = np.sum(delta, axis=1, keepdims=True)
-
             if layer_index > 0:
                 d_activation = self.weights[layer_index].T @ delta
-                z_previous = self.weighted_sums[layer_index - 1]
-                activation_output = self.activations[layer_index]
+                hidden_index = layer_index - 1
+                activation_gradients[hidden_index] = d_activation.T.copy()
+                z_value = self.weighted_sums[hidden_index]
+                activation_output = self.activations[hidden_index + 1]
                 if self.hidden_activation == "relu":
-                    derivative = relu_derivative(z_previous)
+                    derivative = relu_derivative(z_value)
                 elif self.hidden_activation == "leaky_relu":
-                    derivative = leaky_relu_derivative(z_previous)
+                    derivative = leaky_relu_derivative(z_value)
                 elif self.hidden_activation == "sigmoid":
-                    derivative = sigmoid_derivative(z_previous, activation_output=activation_output)
+                    derivative = sigmoid_derivative(z_value, activation_output=activation_output)
                 else:
-                    derivative = tanh_derivative(z_previous, activation_output=activation_output)
+                    derivative = tanh_derivative(z_value, activation_output=activation_output)
+                activation_derivatives[hidden_index] = np.asarray(derivative).T.copy()
                 delta = d_activation * derivative
 
         self.gradients = {
@@ -223,6 +242,9 @@ class NeuralNetwork:
             "bias_gradients": bias_gradients,
             "weight_norms": [float(np.linalg.norm(gradient)) for gradient in weight_gradients],
             "bias_norms": [float(np.linalg.norm(gradient)) for gradient in bias_gradients],
+            "activation_gradients": activation_gradients,
+            "activation_derivatives": activation_derivatives,
+            "preactivation_gradients": preactivation_gradients,
         }
         self.weight_gradients = weight_gradients
         self.bias_gradients = bias_gradients
