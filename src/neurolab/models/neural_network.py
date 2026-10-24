@@ -88,6 +88,7 @@ class NeuralNetwork:
         # Caches are populated on every forward pass for future learning steps.
         self.activations: list[np.ndarray] = []
         self.weighted_sums: list[np.ndarray] = []
+        self._gradients_available = False
 
     @staticmethod
     def _validate_width(value: int, name: str) -> int:
@@ -101,6 +102,7 @@ class NeuralNetwork:
         The computation uses column-oriented activations internally, so each
         layer applies ``Z = W @ A + b``. Returned rows correspond to samples.
         """
+        self._gradients_available = False
         values = np.asarray(inputs, dtype=float)
         if values.ndim == 1:
             if values.shape[0] != self.input_feature_count:
@@ -224,6 +226,7 @@ class NeuralNetwork:
         }
         self.weight_gradients = weight_gradients
         self.bias_gradients = bias_gradients
+        self._gradients_available = True
         return self.gradients
 
     def _prepare_targets(self, targets: np.ndarray) -> np.ndarray:
@@ -241,3 +244,56 @@ class NeuralNetwork:
         if not np.all(np.isfinite(values)):
             raise ValueError("Targets must contain only finite values.")
         return values
+
+    @property
+    def trainable_parameters(self) -> list[np.ndarray]:
+        """Return weights followed by biases, matching the gradient ordering."""
+        return [*self.weights, *self.biases]
+
+    def apply_gradients(
+        self,
+        optimizer: object,
+        gradients: dict[str, object] | None = None,
+    ) -> None:
+        """Apply previously calculated gradients through an optimizer.
+
+        Gradient calculation and parameter updates remain separate: call
+        ``backward`` first, then pass its result here. The forward cache is
+        cleared after a successful update so it cannot be reused with new
+        weights.
+        """
+        if gradients is None and not self._gradients_available:
+            raise RuntimeError("Call backward() after the latest forward pass before apply_gradients().")
+        selected_gradients = self.gradients if gradients is None else gradients
+        if selected_gradients is None:
+            raise RuntimeError("Call backward() before apply_gradients().")
+        try:
+            weight_gradients = selected_gradients["weight_gradients"]
+            bias_gradients = selected_gradients["bias_gradients"]
+        except (KeyError, TypeError) as error:
+            raise ValueError("Gradients must contain weight_gradients and bias_gradients.") from error
+        if len(weight_gradients) != len(self.weights) or len(bias_gradients) != len(self.biases):
+            raise ValueError("Gradient layer counts must match the network parameters.")
+        if not hasattr(optimizer, "step"):
+            raise TypeError("optimizer must provide a step(parameters, gradients) method.")
+        optimizer.step(
+            self.trainable_parameters,
+            [*weight_gradients, *bias_gradients],
+        )
+        self.activations = []
+        self.weighted_sums = []
+        self._gradients_available = False
+
+    def train_step(
+        self,
+        inputs: np.ndarray,
+        targets: np.ndarray,
+        optimizer: object,
+        loss: str = "binary_cross_entropy",
+    ) -> float:
+        """Run one forward/backward/update step and return the pre-update loss."""
+        self.forward(inputs)
+        gradients = self.backward(targets, loss=loss)
+        loss_before_update = float(gradients["loss"])
+        self.apply_gradients(optimizer, gradients)
+        return loss_before_update
