@@ -5,6 +5,7 @@ import streamlit as st
 from src.neurolab.dashboard import render_dashboard
 from src.neurolab.activation_playground import render_activation_playground
 from src.neurolab.loss_playground import render_loss_playground
+from src.neurolab.network_playground import render_network_playground
 from src.neurolab.navigation import NAVIGATION, render_placeholder
 from src.neurolab.theme import apply_theme
 
@@ -39,5 +40,7 @@ elif selected == "Activation Functions":
     render_activation_playground()
 elif selected == "Loss Functions":
     render_loss_playground()
+elif selected == "Network Playground":
+    render_network_playground()
 else:
     render_placeholder(selected)
