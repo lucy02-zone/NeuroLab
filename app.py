@@ -89,7 +89,8 @@ elif selected == "Math Calculator":
 elif selected == "Quiz & Challenge Center":
     render_quiz_center()
 elif selected == "Activation Functions":
-    render_activation_playground()
+    with st.container(key="activation_playground_page"):
+        render_activation_playground()
 elif selected == "Loss Functions":
     render_loss_playground()
 elif selected == "Network Playground":

@@ -311,6 +311,16 @@ def apply_theme() -> None:
         [class*="st-key-optimizer_run"] button * { color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important; font:inherit !important; }
         [class*="st-key-optimizer_run"] button:hover { transform:translateY(-1px); filter:brightness(1.08); box-shadow:0 10px 22px #17263F30 !important; }
         [class*="st-key-optimizer_lab_page"] [data-testid="stTable"], [class*="st-key-optimizer_lab_page"] [data-testid="stDataFrame"] { border:1px solid var(--line); border-radius:.8rem; overflow:hidden; }
+
+        /* Activation Functions: clear hierarchy, lighter charts, and grouped controls. */
+        [class*="st-key-activation_playground_page"] .activation-hero { min-height:245px; margin:.5rem 0 1.35rem; }
+        [class*="st-key-activation_controls"] { margin:.35rem 0 1.25rem; padding:1rem 1.15rem .35rem; border-color:var(--line); border-radius:1rem; background:#FFFFFF; box-shadow:0 5px 17px #1B355008; }
+        [class*="st-key-activation_controls"] label { color:#40566F !important; font-weight:600 !important; }
+        [class*="st-key-activation_playground_page"] .info-panel { height:100%; }
+        [class*="st-key-activation_playground_page"] [data-testid="stExpander"] { margin:.8rem 0; border-color:var(--line); border-radius:1rem; background:#FFFFFF; box-shadow:0 5px 17px #1B355008; }
+        [class*="st-key-activation_playground_page"] [data-testid="stExpander"] summary p { color:var(--navy) !important; font:700 .98rem 'Space Grotesk',sans-serif; }
+        [class*="st-key-activation_playground_page"] [data-testid="stCaptionContainer"] { color:var(--muted); }
+        [class*="st-key-activation_playground_page"] [data-testid="stImage"] { border:1px solid var(--line); border-radius:.9rem; background:#F3F6FA; overflow:hidden; }
         @media (max-width: 800px) {
             .block-container { padding:1rem .9rem 2rem !important; }
             .hero { padding:1.45rem; min-height:260px; margin:.35rem 0 1.35rem; border-radius:1rem; }
@@ -321,6 +331,7 @@ def apply_theme() -> None:
             .feature-card { min-height:0; padding:1rem; margin-bottom:.75rem; }
             .dashboard-module-card { min-height:0; }
             .playground-hero { min-height:225px !important; padding:1.35rem !important; }
+            [class*="st-key-activation_controls"] { padding:.85rem .85rem .25rem; }
             [class*="st-key-wizard_step_panel"] { padding:1rem !important; }
             [data-testid="stMetric"] { min-height:0; padding:.7rem .75rem; }
             [data-testid="stMetricValue"] { font-size:1.25rem; }
