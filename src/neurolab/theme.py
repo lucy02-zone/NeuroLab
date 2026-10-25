@@ -20,15 +20,25 @@ def apply_theme() -> None:
         a { color:var(--plum-light) !important; }
         [data-testid="stSidebar"], [data-testid="stSidebar"] > div { background:#2F4156 !important; border-right:1px solid var(--line); }
         [data-testid="stSidebar"] > div { padding:1.5rem 1rem 1rem; }
-        [data-testid="stSidebar"] h3 { margin-top:-3.2rem; margin-left:3.2rem; font-size:1.2rem; }
-        [data-testid="stSidebar"] [data-testid="stCaptionContainer"] { margin-left:3.2rem; margin-top:-.8rem; font-size:.72rem; color:#FFFFFF; }
-        .brand-mark { display:grid; place-items:center; width:2.4rem; height:2.4rem; border-radius:.8rem; color:white; font:700 1.2rem 'Space Grotesk'; background:var(--plum); box-shadow:0 6px 18px #2F41563b; }
+        .brand-lockup { display:flex; align-items:center; gap:.78rem; margin:.2rem 0 1.7rem; min-width:0; }
+        .brand-mark { flex:0 0 2.8rem; display:grid; place-items:center; width:2.8rem; height:2.8rem; border:1px solid #5B8FF966; border-radius:.9rem; background:linear-gradient(145deg,#182943,#243b5c); box-shadow:0 7px 18px #101a2b55; transition:transform .18s ease,box-shadow .18s ease; }
+        .brand-mark:hover { transform:translateY(-1px); box-shadow:0 9px 22px #101a2b77; }
+        .brand-mark svg { width:2.1rem; height:2.1rem; overflow:visible; }
+        .brand-mark path { fill:none; stroke:#79A7FF; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; opacity:.9; }
+        .brand-mark .node { stroke:#DDEBFF; stroke-width:1.5; }
+        .brand-mark .node-blue { fill:#5B8FF9; }
+        .brand-mark .node-cyan { fill:#4BD4E8; }
+        .brand-mark .node-violet { fill:#A78BFA; }
+        .brand-copy { min-width:0; }
+        .brand-name { color:#FFFFFF; font:700 1.12rem 'Space Grotesk',sans-serif; letter-spacing:-.025em; line-height:1.15; }
+        .brand-tagline { margin-top:.3rem; color:#C8D9E6; font-size:.65rem; line-height:1.35; white-space:normal; }
         .sidebar-label { color:#C8D9E6; font-size:.65rem; font-weight:700; letter-spacing:.16em; margin:2.2rem 0 .6rem; }
         [data-testid="stSidebar"] .stButton { margin:.08rem 0; }
         [data-testid="stSidebar"] .stButton > button {
             width:100%; min-height:2.7rem; justify-content:flex-start; text-align:left;
             padding:.58rem .78rem !important; border-radius:.72rem !important;
-            font-size:.84rem !important; font-weight:600 !important;
+            font-family:'DM Sans',sans-serif !important; font-size:.92rem !important;
+            font-weight:600 !important; letter-spacing:.005em;
         }
         [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
             color:var(--plum-light) !important; background:transparent !important;
@@ -110,6 +120,8 @@ def apply_theme() -> None:
         [data-testid="stSidebar"] .stButton > button [data-testid="stMarkdownContainer"],
         [data-testid="stSidebar"] .stButton > button p {
             color:#FFFFFF !important; fill:#FFFFFF !important;
+            font-family:'DM Sans',sans-serif !important; font-size:.92rem !important;
+            font-weight:600 !important; letter-spacing:.005em;
         }
         [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:hover {
             background:#2F4156 !important; border-color:#2F4156 !important;

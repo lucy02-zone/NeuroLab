@@ -35,9 +35,25 @@ def _select_navigation(section: str) -> None:
 
 
 with st.sidebar:
-    st.markdown('<div class="brand-mark">N</div>', unsafe_allow_html=True)
-    st.markdown("### NeuroLab")
-    st.caption("Build. Train. Visualize. Understand.")
+    st.markdown(
+        """<div class="brand-lockup">
+            <div class="brand-mark" aria-label="NeuroLab neural network logo">
+                <svg viewBox="0 0 48 48" role="img" aria-hidden="true">
+                    <path d="M12 14 23 24 36 12M12 14l1 20 10-10m0 0 12 12m-12-12 13-12" />
+                    <circle class="node node-blue" cx="12" cy="14" r="4" />
+                    <circle class="node node-cyan" cx="36" cy="12" r="4" />
+                    <circle class="node node-violet" cx="23" cy="24" r="4.5" />
+                    <circle class="node node-cyan" cx="13" cy="34" r="4" />
+                    <circle class="node node-blue" cx="36" cy="36" r="4" />
+                </svg>
+            </div>
+            <div class="brand-copy">
+                <div class="brand-name">NeuroLab</div>
+                <div class="brand-tagline">Build. Train. Visualize. Understand.</div>
+            </div>
+        </div>""",
+        unsafe_allow_html=True,
+    )
     st.markdown('<div class="sidebar-label">WORKSPACE</div>', unsafe_allow_html=True)
     if "navigation_selection" not in st.session_state:
         st.session_state.navigation_selection = NAVIGATION[0]
