@@ -8,6 +8,7 @@ NAVIGATION = (
     "Network Playground",
     "Dataset Explorer",
     "Experiment Wizard",
+    "Model Manager",
     "Network Visualizer",
     "Activation Functions",
     "Loss Functions",

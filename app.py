@@ -5,6 +5,7 @@ import streamlit as st
 from src.neurolab.dashboard import render_dashboard
 from src.neurolab.dataset_explorer import render_dataset_explorer
 from src.neurolab.experiment_wizard import render_experiment_wizard
+from src.neurolab.model_manager import render_model_manager
 from src.neurolab.activation_playground import render_activation_playground
 from src.neurolab.backpropagation_explorer import render_backpropagation_explorer
 from src.neurolab.loss_playground import render_loss_playground
@@ -39,7 +40,7 @@ with st.sidebar:
     if "navigation_selection" not in st.session_state:
         st.session_state.navigation_selection = NAVIGATION[0]
 
-    navigation_icons = ("⌂", "⬡", "▦", "✦", "◉", "ƒ", "∿", "↗", "⇠", "▤", "✧")
+    navigation_icons = ("⌂", "⬡", "▦", "✦", "⇄", "◉", "ƒ", "∿", "↗", "⇠", "▤", "✧")
     for section, icon in zip(NAVIGATION, navigation_icons):
         st.button(
             f"{icon}   {section}",
@@ -63,6 +64,8 @@ elif selected == "Dataset Explorer":
     render_dataset_explorer()
 elif selected == "Experiment Wizard":
     render_experiment_wizard()
+elif selected == "Model Manager":
+    render_model_manager()
 elif selected == "Activation Functions":
     render_activation_playground()
 elif selected == "Loss Functions":

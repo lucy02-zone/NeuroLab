@@ -10,6 +10,7 @@ def test_navigation_contains_requested_sections():
         "Network Playground",
         "Dataset Explorer",
         "Experiment Wizard",
+        "Model Manager",
         "Network Visualizer",
         "Activation Functions",
         "Loss Functions",
