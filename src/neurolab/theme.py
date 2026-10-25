@@ -48,6 +48,11 @@ def apply_theme() -> None:
             background:var(--navy) !important; border-right:1px solid #263B56;
         }
         [data-testid="stSidebar"] > div { padding:1.35rem .9rem 1rem; }
+        [data-testid="stSidebarCollapseButton"] { display:flex !important; visibility:visible !important; opacity:1 !important; }
+        [data-testid="stSidebarCollapseButton"] button { display:grid !important; place-items:center; min-width:2.25rem !important; min-height:2.25rem !important; border:1px solid #49627E !important; border-radius:.65rem !important; background:#223752 !important; color:#F3F6FA !important; opacity:1 !important; }
+        [data-testid="stSidebarCollapseButton"] button:hover { background:#2D4867 !important; border-color:#7895B4 !important; }
+        [data-testid="stSidebarCollapseButton"] button svg { color:#F3F6FA !important; fill:#F3F6FA !important; opacity:1 !important; }
+        [data-testid="stSidebarCollapseButton"] button svg path { fill:#F3F6FA !important; }
         .brand-lockup { display:flex; align-items:center; gap:.78rem; margin:.2rem 0 1.55rem; min-width:0; }
         .brand-mark { flex:0 0 2.8rem; display:grid; place-items:center; width:2.8rem; height:2.8rem; border:1px solid #7098E866; border-radius:.9rem; background:linear-gradient(145deg,#233C5E,#315982); box-shadow:0 7px 18px #08152555; transition:transform .18s ease,box-shadow .18s ease; }
         .brand-mark:hover { transform:translateY(-1px); box-shadow:0 9px 22px #08152577; }
