@@ -686,6 +686,51 @@ def apply_theme() -> None:
             color: #f3f6fa !important;
             fill: #f3f6fa !important;
         }
+
+        /* Network Playground: make each step and its controls visibly defined. */
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] {
+            border: 2px solid #b5c7d9 !important;
+            border-radius: 0.95rem !important;
+            box-shadow: 0 5px 16px rgba(23, 38, 63, 0.07) !important;
+        }
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] summary,
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] summary p {
+            color: #17263f !important;
+            font-weight: 700 !important;
+        }
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] summary p {
+            font-family: 'Space Grotesk', sans-serif !important;
+        }
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] [data-baseweb="input"] > div,
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] [data-baseweb="select"] > div {
+            background: #f7fafd !important;
+            border: 1.7px solid #a8bdcf !important;
+            border-radius: 0.68rem !important;
+            box-shadow: 0 1px 3px rgba(23, 38, 63, 0.07) !important;
+        }
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] [data-baseweb="input"] > div:focus-within,
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] [data-baseweb="select"] > div:focus-within {
+            background: #ffffff !important;
+            border: 2px solid #4e73d8 !important;
+            box-shadow: 0 0 0 3px rgba(78, 115, 216, 0.16) !important;
+        }
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] input,
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] [data-baseweb="select"] div {
+            color: #17263f !important;
+            -webkit-text-fill-color: #17263f !important;
+            font-weight: 600 !important;
+        }
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] label,
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] [data-testid="stCaptionContainer"] {
+            color: #40566f !important;
+            font-weight: 600 !important;
+        }
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] [aria-disabled="true"],
+        [class*="st-key-network_playground_page"] [data-testid="stExpander"] [data-disabled="true"] {
+            color: #71849a !important;
+            -webkit-text-fill-color: #71849a !important;
+            opacity: 1 !important;
+        }
         </style>
         """,
         unsafe_allow_html=True,
