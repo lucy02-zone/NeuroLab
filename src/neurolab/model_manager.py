@@ -183,113 +183,153 @@ def _render_model_details(model: Mapping[str, Any], manifest: Mapping[str, Any] 
 
 def render_model_manager() -> None:
     """Render model export, explicit import, loaded model details, and inference."""
-    st.markdown('<div class="eyebrow">EXPORT · IMPORT · PREDICT</div>', unsafe_allow_html=True)
-    st.title("Model Manager")
-    st.markdown("Export trained NumPy networks, safely restore a NeuroLab model file, and inspect predictions without training.")
+    with st.container(key="model_manager_page"):
+        _render_model_manager_content()
 
-    st.markdown("### Export a trained model")
+
+def _render_model_manager_content() -> None:
+    st.markdown(
+        """<section class="hero playground-hero">
+            <div class="hero-copy">
+                <div class="hero-kicker">MODEL WORKSPACE · SAVE AND REUSE</div>
+                <h1>Model Manager<span class="hero-period">.</span></h1>
+                <div class="hero-tagline">Keep your trained networks ready to use.</div>
+                <p class="hero-description">Export model parameters, safely import a NeuroLab model, and generate predictions without retraining.</p>
+                <div class="hero-chip"><span class="status-dot"></span>Model files stay portable and inspectable</div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span>
+                <span class="neuron n1"></span><span class="neuron n2"></span><span class="neuron n3"></span>
+                <span class="neuron n4"></span><span class="neuron n5"></span><span class="neuron n6"></span>
+                <span class="neuron n7"></span><span class="neuron n8"></span><span class="neuron n9"></span>
+            </div>
+        </section>""",
+        unsafe_allow_html=True,
+    )
+
+    active_step = max(1, min(3, int(st.session_state.get("model_manager_step", 1))))
+    step_names = ("EXPORT MODEL", "IMPORT MODEL", "PREDICT / REVIEW")
+    st.progress(active_step / 3, text=f"STEP {active_step} OF 3 · {step_names[active_step - 1]}")
+
     models = available_models(st.session_state)
     exportable = {model_id: model for model_id, model in models.items() if model["trained"]}
-    if exportable:
-        selected_id = st.selectbox("Available trained model", tuple(exportable), format_func=lambda model_id: exportable[model_id]["label"], key="model_export_selection")
-        selected = exportable[selected_id]
-        _render_model_details(selected)
-        try:
-            file_bytes = export_model(selected["network"], selected["metadata"])
-            filename = re.sub(r"[^a-zA-Z0-9_-]+", "_", selected["label"]).strip("_").lower() or "neurolab_model"
-            st.download_button("Download model file", file_bytes, f"{filename}.nlmodel", "application/zip", key="model_export_download")
-        except (TypeError, ValueError) as error:
-            st.error(f"Model could not be exported: {error}")
-    else:
-        st.info("Train a model in Network Playground, Optimizer Lab, or Experiment Wizard before exporting it.")
-
-    st.markdown("### Import a NeuroLab model")
-    uploaded = st.file_uploader("Choose a .nlmodel file", type=["nlmodel", "zip"], key="model_import_upload")
-    import_error = None
-    imported_model = None
-    manifest = None
-    uploaded_bytes = None
-    if uploaded is not None:
-        uploaded_bytes = uploaded.getvalue()
-        try:
-            imported_model, manifest = import_model(uploaded_bytes)
-            user_metadata = manifest["metadata"]
-            temporary = {"network": imported_model, "source": "Model file", "trained": bool(user_metadata.get("trained", False))}
-            st.success("Model file is valid. Review its details, then explicitly load it into this session.")
-            _render_model_details(temporary, manifest)
-            if st.button("Load imported model into session", type="primary", key="model_import_confirm"):
-                digest = sha256(uploaded_bytes).hexdigest()
-                loaded = st.session_state.setdefault(IMPORTED_MODELS_KEY, [])
-                if any(item.get("id") == digest for item in loaded):
-                    st.info("This exact model file is already loaded in this session.")
-                else:
-                    loaded.append({"id": digest, "label": user_metadata.get("model_label", uploaded.name),
-                                   "network": imported_model, "manifest": manifest})
-                    st.success("Imported model loaded. Existing trained models were left unchanged.")
-                st.rerun()
-        except (TypeError, ValueError, OSError) as error:
-            import_error = str(error)
-            st.error(f"Model import rejected: {import_error}")
-
-    st.markdown("### Loaded models")
-    models = available_models(st.session_state)
-    if models:
-        selected_loaded_id = st.selectbox("Inspect model", tuple(models), format_func=lambda model_id: models[model_id]["label"], key="model_details_selection")
-        _render_model_details(models[selected_loaded_id])
-    else:
-        st.info("No model is currently available in this session. Imported models appear here after you confirm loading.")
-
-    st.markdown("### Predict with a model")
-    if not models:
-        st.caption("Load a model or complete training before making predictions.")
-        return
-    selected_prediction_id = st.selectbox("Model for prediction", tuple(models), format_func=lambda model_id: models[model_id]["label"], key="model_prediction_selection")
-    selected_prediction_model = models[selected_prediction_id]
-    network: NeuralNetwork = selected_prediction_model["network"]
-    if not selected_prediction_model["trained"]:
-        st.warning("This model is marked untrained. Predictions are available for inspection but do not indicate accuracy.")
-    input_mode = st.radio("Input source", ("Enter one sample", "Upload CSV batch"), horizontal=True, key="model_prediction_mode")
-    prediction_features: np.ndarray | None = None
-    if input_mode == "Enter one sample":
-        cols = st.columns(min(network.input_feature_count, 4))
-        sample = []
-        for index in range(network.input_feature_count):
-            sample.append(cols[index % len(cols)].number_input(
-                f"Feature {index + 1}", value=0.0, format="%.5f",
-                key=f"model_input_{selected_prediction_id}_{index}",
-            ))
-        prediction_features = np.asarray(sample, dtype=float).reshape(1, -1)
-    else:
-        input_file = st.file_uploader("CSV with numeric feature columns only (no header)", type=["csv"], key="model_prediction_csv")
-        if input_file is not None:
+    with st.expander("Step 1 · Export a trained model", expanded=active_step == 1):
+        if exportable:
+            selected_id = st.selectbox("Available trained model", tuple(exportable), format_func=lambda model_id: exportable[model_id]["label"], key="model_export_selection")
+            selected = exportable[selected_id]
+            _render_model_details(selected)
             try:
-                prediction_features = parse_csv_features(input_file.getvalue(), network.input_feature_count)
-                st.caption(f"Ready to predict {len(prediction_features)} samples.")
-            except ValueError as error:
-                st.error(str(error))
-
-    if st.button("Generate predictions", type="primary", key="model_prediction_run") and prediction_features is not None:
-        try:
-            outputs, predicted_classes = predict_with_model(network, prediction_features, selected_prediction_model["metadata"])
-            st.session_state[PREDICTION_KEY] = {
-                "model_id": selected_prediction_id, "features": prediction_features.copy(),
-                "outputs": outputs.copy(), "predicted_classes": predicted_classes.copy(),
-            }
-        except (ValueError, FloatingPointError) as error:
-            st.error(f"Prediction could not be generated: {error}")
-
-    prediction = st.session_state.get(PREDICTION_KEY)
-    if prediction and prediction.get("model_id") == selected_prediction_id:
-        outputs = prediction["outputs"]
-        if network.output_size == 1:
-            rows = [{"Sample": i + 1, "P(class 1)": float(row[0]), "P(class 0)": float(1 - row[0]),
-                     "Predicted class": int(prediction["predicted_classes"][i])}
-                    for i, row in enumerate(outputs)]
-            st.caption("For a single sigmoid output, the displayed class-0 probability is 1 − P(class 1).")
+                file_bytes = export_model(selected["network"], selected["metadata"])
+                filename = re.sub(r"[^a-zA-Z0-9_-]+", "_", selected["label"]).strip("_").lower() or "neurolab_model"
+                st.download_button("Download model file", file_bytes, f"{filename}.nlmodel", "application/zip", key="model_export_download")
+            except (TypeError, ValueError) as error:
+                st.error(f"Model could not be exported: {error}")
         else:
-            rows = [{"Sample": i + 1, **{f"Sigmoid score {j + 1}": float(value) for j, value in enumerate(row)},
-                     "Predicted class": int(prediction["predicted_classes"][i])}
-                    for i, row in enumerate(outputs)]
-            st.caption("Multiple sigmoid outputs are independent scores, not normalized softmax probabilities; the displayed class is their argmax.")
-        st.dataframe(rows, hide_index=True, width="stretch")
-        st.caption("An imported model's predictions do not establish that it is accurate.")
+            st.info("Train a model in Network Playground, Optimizer Lab, or Experiment Wizard before exporting it.")
+        if active_step == 1:
+            _, next_column = st.columns([1, 0.42])
+            with next_column:
+                st.button("Continue to import →", type="primary", width="stretch", key="model_next_export",
+                          on_click=_set_model_manager_step, args=(2,))
+
+    with st.expander("Step 2 · Import a NeuroLab model", expanded=active_step == 2):
+        uploaded = st.file_uploader("Choose a .nlmodel file", type=["nlmodel", "zip"], key="model_import_upload")
+        if uploaded is not None:
+            uploaded_bytes = uploaded.getvalue()
+            try:
+                imported_model, manifest = import_model(uploaded_bytes)
+                user_metadata = manifest["metadata"]
+                temporary = {"network": imported_model, "source": "Model file", "trained": bool(user_metadata.get("trained", False))}
+                st.success("Model file is valid. Review its details, then explicitly load it into this session.")
+                _render_model_details(temporary, manifest)
+                if st.button("Load imported model into session", type="primary", key="model_import_confirm"):
+                    digest = sha256(uploaded_bytes).hexdigest()
+                    loaded = st.session_state.setdefault(IMPORTED_MODELS_KEY, [])
+                    if any(item.get("id") == digest for item in loaded):
+                        st.info("This exact model file is already loaded in this session.")
+                    else:
+                        loaded.append({"id": digest, "label": user_metadata.get("model_label", uploaded.name),
+                                       "network": imported_model, "manifest": manifest})
+                        st.success("Imported model loaded. Existing trained models were left unchanged.")
+                    st.rerun()
+            except (TypeError, ValueError, OSError) as error:
+                st.error(f"Model import rejected: {error}")
+        if active_step == 2:
+            back_column, next_column = st.columns(2)
+            with back_column:
+                st.button("← Back to export", width="stretch", key="model_back_import",
+                          on_click=_set_model_manager_step, args=(1,))
+            with next_column:
+                st.button("Continue to models →", type="primary", width="stretch", key="model_next_import",
+                          on_click=_set_model_manager_step, args=(3,))
+
+    models = available_models(st.session_state)
+    with st.expander("Step 3 · Loaded models and predictions", expanded=active_step == 3):
+        if models:
+            selected_loaded_id = st.selectbox("Inspect model", tuple(models), format_func=lambda model_id: models[model_id]["label"], key="model_details_selection")
+            _render_model_details(models[selected_loaded_id])
+        else:
+            st.info("No model is currently available in this session. Imported models appear here after you confirm loading.")
+
+        st.markdown("#### Predict with a model")
+        if not models:
+            st.caption("Load a model or complete training before making predictions.")
+        else:
+            selected_prediction_id = st.selectbox("Model for prediction", tuple(models), format_func=lambda model_id: models[model_id]["label"], key="model_prediction_selection")
+            selected_prediction_model = models[selected_prediction_id]
+            network: NeuralNetwork = selected_prediction_model["network"]
+            if not selected_prediction_model["trained"]:
+                st.warning("This model is marked untrained. Predictions are available for inspection but do not indicate accuracy.")
+            input_mode = st.radio("Input source", ("Enter one sample", "Upload CSV batch"), horizontal=True, key="model_prediction_mode")
+            prediction_features: np.ndarray | None = None
+            if input_mode == "Enter one sample":
+                cols = st.columns(min(network.input_feature_count, 4))
+                sample = []
+                for index in range(network.input_feature_count):
+                    sample.append(cols[index % len(cols)].number_input(
+                        f"Feature {index + 1}", value=0.0, format="%.5f",
+                        key=f"model_input_{selected_prediction_id}_{index}",
+                    ))
+                prediction_features = np.asarray(sample, dtype=float).reshape(1, -1)
+            else:
+                input_file = st.file_uploader("CSV with numeric feature columns only (no header)", type=["csv"], key="model_prediction_csv")
+                if input_file is not None:
+                    try:
+                        prediction_features = parse_csv_features(input_file.getvalue(), network.input_feature_count)
+                        st.caption(f"Ready to predict {len(prediction_features)} samples.")
+                    except ValueError as error:
+                        st.error(str(error))
+
+            if st.button("Generate predictions", type="primary", key="model_prediction_run") and prediction_features is not None:
+                try:
+                    outputs, predicted_classes = predict_with_model(network, prediction_features, selected_prediction_model["metadata"])
+                    st.session_state[PREDICTION_KEY] = {
+                        "model_id": selected_prediction_id, "features": prediction_features.copy(),
+                        "outputs": outputs.copy(), "predicted_classes": predicted_classes.copy(),
+                    }
+                except (ValueError, FloatingPointError) as error:
+                    st.error(f"Prediction could not be generated: {error}")
+
+            prediction = st.session_state.get(PREDICTION_KEY)
+            if prediction and prediction.get("model_id") == selected_prediction_id:
+                outputs = prediction["outputs"]
+                if network.output_size == 1:
+                    rows = [{"Sample": i + 1, "P(class 1)": float(row[0]), "P(class 0)": float(1 - row[0]),
+                             "Predicted class": int(prediction["predicted_classes"][i])}
+                            for i, row in enumerate(outputs)]
+                    st.caption("For a single sigmoid output, the displayed class-0 probability is 1 − P(class 1).")
+                else:
+                    rows = [{"Sample": i + 1, **{f"Sigmoid score {j + 1}": float(value) for j, value in enumerate(row)},
+                             "Predicted class": int(prediction["predicted_classes"][i])}
+                            for i, row in enumerate(outputs)]
+                    st.caption("Multiple sigmoid outputs are independent scores, not normalized softmax probabilities; the displayed class is their argmax.")
+                st.dataframe(rows, hide_index=True, width="stretch")
+                st.caption("An imported model's predictions do not establish that it is accurate.")
+        if active_step == 3:
+            st.button("← Back to import", width="stretch", key="model_back_review",
+                      on_click=_set_model_manager_step, args=(2,))
+
+
+def _set_model_manager_step(step: int) -> None:
+    """Select the active step in the Model Manager workflow."""
+    st.session_state["model_manager_step"] = step

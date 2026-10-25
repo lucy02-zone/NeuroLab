@@ -192,9 +192,29 @@ def _summary_table(config: Mapping[str, Any]) -> list[dict[str, str]]:
 
 def render_experiment_wizard() -> None:
     """Render the persistent, explicitly gated experiment workflow."""
-    st.markdown('<div class="eyebrow">PLAN · TRAIN · EVALUATE · SAVE</div>', unsafe_allow_html=True)
-    st.title("Experiment Wizard")
-    st.markdown("Build one complete, reproducible experiment with guided steps. Training and saving happen only after you request them.")
+    with st.container(key="experiment_wizard_page"):
+        _render_experiment_wizard_content()
+
+
+def _render_experiment_wizard_content() -> None:
+    st.markdown(
+        """<section class="hero playground-hero">
+            <div class="hero-copy">
+                <div class="hero-kicker">EXPERIMENT STUDIO · DESIGN A RUN</div>
+                <h1>Experiment Wizard<span class="hero-period">.</span></h1>
+                <div class="hero-tagline">Plan carefully. Train deliberately. Learn from the result.</div>
+                <p class="hero-description">Configure a reproducible experiment, review every setting, then explicitly start training and save its results.</p>
+                <div class="hero-chip"><span class="status-dot"></span>Training starts only after your confirmation</div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span>
+                <span class="neuron n1"></span><span class="neuron n2"></span><span class="neuron n3"></span>
+                <span class="neuron n4"></span><span class="neuron n5"></span><span class="neuron n6"></span>
+                <span class="neuron n7"></span><span class="neuron n8"></span><span class="neuron n9"></span>
+            </div>
+        </section>""",
+        unsafe_allow_html=True,
+    )
 
     if STATE_KEY not in st.session_state:
         st.session_state[STATE_KEY] = new_wizard_state()
@@ -219,194 +239,199 @@ def render_experiment_wizard() -> None:
     step = int(state["step"])
     st.caption(f"Step {step + 1} of {len(STEP_NAMES)} · {STEP_NAMES[step]}")
     st.progress((step + 1) / len(STEP_NAMES), text=f"{STEP_NAMES[step]} · {step + 1}/{len(STEP_NAMES)}")
-    st.markdown(f"### {step + 1} · {STEP_NAMES[step]}")
+    st.markdown(
+        f'<div class="wizard-step-heading"><span>STEP {step + 1:02d}</span><h2>{STEP_NAMES[step]}</h2>'
+        f'<div class="wizard-step-count">{step + 1} / {len(STEP_NAMES)}</div></div>',
+        unsafe_allow_html=True,
+    )
 
-    details, data, network, training = (state[key] for key in ("details", "dataset", "network", "training"))
-    if step == 0:
-        st.write("Name the run and record enough context to reproduce or explain it later.")
-        st.text_input("Experiment name *", value=details["name"], key="wizard_name")
-        st.text_area("Short description (optional)", value=details["description"], key="wizard_description")
-        note_cols = st.columns(2)
-        with note_cols[0]:
-            st.text_area("Experiment notes", value=details["notes"], key="wizard_notes")
-        with note_cols[1]:
-            st.number_input("Random seed", 0, 999_999, int(details["seed"]), 1, key="wizard_seed")
-    elif step == 1:
-        data_cols = st.columns([0.85, 1.15], gap="large")
-        with data_cols[0]:
-            dataset_name = st.selectbox("Synthetic dataset", tuple(DATASETS), index=tuple(DATASETS).index(data["name"]), key="wizard_dataset")
-            samples = st.slider("Number of samples", 40, 2000, int(data["samples"]), 20, key="wizard_samples")
-            noise = st.slider("Noise level", 0.0, 0.5, float(data["noise"]), 0.01, key="wizard_noise")
-            st.select_slider("Class 1 share", options=tuple(range(10, 95, 5)), value=int(round(data["class_1_fraction"] * 100)), format_func=lambda value: f"{value}%", key="wizard_class_balance")
-            if dataset_name == "Concentric circles":
-                st.slider("Inner-circle radius factor", 0.15, 0.85, float(data["circle_factor"]), 0.05, key="wizard_circle_factor")
-            if dataset_name == "Spiral classification":
-                st.slider("Spiral turns", 1.0, 4.0, float(data["spiral_turns"]), 0.25, key="wizard_spiral_turns")
-            st.slider("Validation split", 0.1, 0.4, float(data["validation_fraction"]), 0.05, key="wizard_validation")
-        with data_cols[1]:
+    with st.container(border=True, key="wizard_step_panel"):
+        details, data, network, training = (state[key] for key in ("details", "dataset", "network", "training"))
+        if step == 0:
+            st.write("Name the run and record enough context to reproduce or explain it later.")
+            st.text_input("Experiment name *", value=details["name"], key="wizard_name")
+            st.text_area("Short description (optional)", value=details["description"], key="wizard_description")
+            note_cols = st.columns(2)
+            with note_cols[0]:
+                st.text_area("Experiment notes", value=details["notes"], key="wizard_notes")
+            with note_cols[1]:
+                st.number_input("Random seed", 0, 999_999, int(details["seed"]), 1, key="wizard_seed")
+        elif step == 1:
+            data_cols = st.columns([0.85, 1.15], gap="large")
+            with data_cols[0]:
+                dataset_name = st.selectbox("Synthetic dataset", tuple(DATASETS), index=tuple(DATASETS).index(data["name"]), key="wizard_dataset")
+                samples = st.slider("Number of samples", 40, 2000, int(data["samples"]), 20, key="wizard_samples")
+                noise = st.slider("Noise level", 0.0, 0.5, float(data["noise"]), 0.01, key="wizard_noise")
+                st.select_slider("Class 1 share", options=tuple(range(10, 95, 5)), value=int(round(data["class_1_fraction"] * 100)), format_func=lambda value: f"{value}%", key="wizard_class_balance")
+                if dataset_name == "Concentric circles":
+                    st.slider("Inner-circle radius factor", 0.15, 0.85, float(data["circle_factor"]), 0.05, key="wizard_circle_factor")
+                if dataset_name == "Spiral classification":
+                    st.slider("Spiral turns", 1.0, 4.0, float(data["spiral_turns"]), 0.25, key="wizard_spiral_turns")
+                st.slider("Validation split", 0.1, 0.4, float(data["validation_fraction"]), 0.05, key="wizard_validation")
+            with data_cols[1]:
+                _collect_widget_values(state)
+                _render_dataset_summary(state)
+        elif step == 2:
+            st.select_slider("Hidden layers", options=tuple(range(0, 6)), value=int(network["hidden_layers"]), key="wizard_layers")
+            layer_count = int(st.session_state.get("wizard_layers", network["hidden_layers"]))
+            widths = []
+            for index in range(layer_count):
+                default = network["hidden_layer_sizes"][index] if index < len(network["hidden_layer_sizes"]) else 8
+                widths.append(st.number_input(f"Layer {index + 1} neurons", 1, 64, int(default), 1, key=f"wizard_layer_{index}"))
+            if layer_count != len(network["hidden_layer_sizes"]):
+                network["hidden_layer_sizes"] = [int(value) for value in widths]
+                network["hidden_layers"] = layer_count
+            st.selectbox("Hidden-layer activation", tuple(ACTIVATIONS), index=tuple(ACTIVATIONS).index(network["hidden_activation"]), key="wizard_activation")
+            output_cols = st.columns(2)
+            output_cols[0].selectbox("Output activation", ("Sigmoid · binary classification",), disabled=True, key="wizard_output_activation")
+            output_cols[1].selectbox("Loss function", ("Binary cross-entropy",), disabled=True, key="wizard_loss")
+            st.info("The current training engine supports binary classification with one sigmoid output and binary cross-entropy.")
+            st.markdown("**Architecture summary**")
+            st.write("Input (2) → " + (" → ".join(map(str, widths)) + " → " if widths else "") + "Output (1)")
+        elif step == 3:
+            training_cols = st.columns(3)
+            with training_cols[0]:
+                st.selectbox("Optimizer", OPTIMIZERS, index=OPTIMIZERS.index(training["optimizer"]), key="wizard_optimizer")
+                st.number_input("Learning rate", 0.0001, 1.0, float(training["learning_rate"]), 0.001, format="%.4f", key="wizard_learning_rate")
+            with training_cols[1]:
+                st.number_input("Epochs", 1, 1000, int(training["epochs"]), 10, key="wizard_epochs")
+                st.number_input("Batch size", 1, int(data["samples"]), min(int(training["batch_size"]), int(data["samples"])), 1, key="wizard_batch_size")
+            with training_cols[2]:
+                selected_optimizer = st.session_state.get("wizard_optimizer", training["optimizer"])
+                if selected_optimizer == "Momentum":
+                    st.slider("Momentum coefficient", 0.0, 0.99, float(training["momentum"]), 0.01, key="wizard_momentum")
+                elif selected_optimizer == "Adam":
+                    st.number_input("Adam β₁", 0.0, 0.999, float(training["beta1"]), 0.01, format="%.3f", key="wizard_beta1")
+                    st.number_input("Adam β₂", 0.0, 0.9999, float(training["beta2"]), 0.001, format="%.4f", key="wizard_beta2")
+                    st.number_input("Adam ε", 1e-10, 1e-3, float(training["epsilon"]), format="%.1e", key="wizard_epsilon")
+            st.caption("Training and validation are stratified. Standardization is fitted on the training split only.")
+        elif step == 4:
             _collect_widget_values(state)
-            _render_dataset_summary(state)
-    elif step == 2:
-        st.select_slider("Hidden layers", options=tuple(range(0, 6)), value=int(network["hidden_layers"]), key="wizard_layers")
-        layer_count = int(st.session_state.get("wizard_layers", network["hidden_layers"]))
-        widths = []
-        for index in range(layer_count):
-            default = network["hidden_layer_sizes"][index] if index < len(network["hidden_layer_sizes"]) else 8
-            widths.append(st.number_input(f"Layer {index + 1} neurons", 1, 64, int(default), 1, key=f"wizard_layer_{index}"))
-        if layer_count != len(network["hidden_layer_sizes"]):
-            network["hidden_layer_sizes"] = [int(value) for value in widths]
-            network["hidden_layers"] = layer_count
-        st.selectbox("Hidden-layer activation", tuple(ACTIVATIONS), index=tuple(ACTIVATIONS).index(network["hidden_activation"]), key="wizard_activation")
-        output_cols = st.columns(2)
-        output_cols[0].selectbox("Output activation", ("Sigmoid · binary classification",), disabled=True, key="wizard_output_activation")
-        output_cols[1].selectbox("Loss function", ("Binary cross-entropy",), disabled=True, key="wizard_loss")
-        st.info("The current training engine supports binary classification with one sigmoid output and binary cross-entropy.")
-        st.markdown("**Architecture summary**")
-        st.write("Input (2) → " + (" → ".join(map(str, widths)) + " → " if widths else "") + "Output (1)")
-    elif step == 3:
-        training_cols = st.columns(3)
-        with training_cols[0]:
-            st.selectbox("Optimizer", OPTIMIZERS, index=OPTIMIZERS.index(training["optimizer"]), key="wizard_optimizer")
-            st.number_input("Learning rate", 0.0001, 1.0, float(training["learning_rate"]), 0.001, format="%.4f", key="wizard_learning_rate")
-        with training_cols[1]:
-            st.number_input("Epochs", 1, 1000, int(training["epochs"]), 10, key="wizard_epochs")
-            st.number_input("Batch size", 1, int(data["samples"]), min(int(training["batch_size"]), int(data["samples"])), 1, key="wizard_batch_size")
-        with training_cols[2]:
-            selected_optimizer = st.session_state.get("wizard_optimizer", training["optimizer"])
-            if selected_optimizer == "Momentum":
-                st.slider("Momentum coefficient", 0.0, 0.99, float(training["momentum"]), 0.01, key="wizard_momentum")
-            elif selected_optimizer == "Adam":
-                st.number_input("Adam β₁", 0.0, 0.999, float(training["beta1"]), 0.01, format="%.3f", key="wizard_beta1")
-                st.number_input("Adam β₂", 0.0, 0.9999, float(training["beta2"]), 0.001, format="%.4f", key="wizard_beta2")
-                st.number_input("Adam ε", 1e-10, 1e-3, float(training["epsilon"]), format="%.1e", key="wizard_epsilon")
-        st.caption("Training and validation are stratified. Standardization is fitted on the training split only.")
-    elif step == 4:
-        _collect_widget_values(state)
-        st.write("Review all settings. Returning to earlier steps keeps your values. Confirming moves to a separate training screen; it does not start training yet.")
-        st.dataframe(_summary_table(state), hide_index=True, width="stretch")
-        if details["description"]:
-            st.markdown(f"**Description:** {details['description']}")
-        if details["notes"]:
-            st.markdown(f"**Notes:** {details['notes']}")
-    elif step == 5:
-        if not training_is_authorized(state):
-            st.warning("Review and confirm the configuration before training.")
-        else:
-            result_entry = st.session_state.get(RESULT_KEY)
-            if result_entry:
-                st.success(f"Training completed: {result_entry['result'].epochs_completed} epochs. No training runs again during ordinary reruns.")
-                if st.button("Continue to evaluation", type="primary", key="wizard_to_evaluate"):
-                    state["step"] = 6
-                    st.rerun()
-            elif st.button("Start training", type="primary", key="wizard_train"):
-                try:
-                    with st.spinner(f"Training {training['optimizer']} for up to {training['epochs']} epochs…"):
-                        features, labels = _dataset(state)
-                        split = split_classification_data(
-                            features, labels, validation_fraction=float(data["validation_fraction"]),
-                            random_seed=int(details["seed"]), standardize=True,
-                        )
-                        optimizer_name = str(training["optimizer"]).lower()
-                        result = train_model(
-                            split.X_train, split.y_train,
-                            hidden_layer_sizes=tuple(int(size) for size in network["hidden_layer_sizes"]),
-                            hidden_activation=ACTIVATIONS[network["hidden_activation"]],
-                            epochs=int(training["epochs"]), batch_size=int(training["batch_size"]),
-                            optimizer=optimizer_name, learning_rate=float(training["learning_rate"]),
-                            momentum=float(training["momentum"]), beta1=float(training["beta1"]),
-                            beta2=float(training["beta2"]), optimizer_epsilon=float(training["epsilon"]),
-                            loss="binary_cross_entropy", validation_data=split.validation_data,
-                            random_seed=int(details["seed"]),
-                        )
-                    st.session_state[RESULT_KEY] = {"result": result, "features": features, "labels": labels, "split": split}
-                    state["step"] = 6
-                    st.rerun()
-                except (ValueError, FloatingPointError, RuntimeError) as error:
-                    st.error(f"Training could not be completed: {error}")
-                except Exception as error:
-                    st.error(f"Unexpected training error: {error}")
-    elif step == 6:
-        entry = st.session_state.get(RESULT_KEY)
-        if entry is None:
-            state["step"] = 5
-            st.warning("Train the configured model before viewing evaluation results.")
-        else:
-            result: TrainingResult = entry["result"]
-            history = result.history
-            if not history["epoch"]:
-                st.warning("The model did not complete an epoch, so no evaluation metrics are available.")
+            st.write("Review all settings. Returning to earlier steps keeps your values. Confirming moves to a separate training screen; it does not start training yet.")
+            st.dataframe(_summary_table(state), hide_index=True, width="stretch")
+            if details["description"]:
+                st.markdown(f"**Description:** {details['description']}")
+            if details["notes"]:
+                st.markdown(f"**Notes:** {details['notes']}")
+        elif step == 5:
+            if not training_is_authorized(state):
+                st.warning("Review and confirm the configuration before training.")
             else:
-                last = -1
-                metric_cols = st.columns(4)
-                metric_cols[0].metric("Training loss", f"{history['training_loss'][last]:.5f}")
-                metric_cols[1].metric("Validation loss", f"{history['validation_loss'][last]:.5f}")
-                metric_cols[2].metric("Training accuracy", f"{history['training_accuracy'][last]:.1%}")
-                metric_cols[3].metric("Validation accuracy", f"{history['validation_accuracy'][last]:.1%}")
-                st.caption(f"Completed epochs: {result.epochs_completed} · Binary prediction threshold: 0.5")
-                loss_figure = plot_loss_history(history)
-                st.pyplot(loss_figure, width="stretch")
-                plt.close(loss_figure)
-                split = entry["split"]
-                probabilities = result.network.forward(split.X_validation)[:, 0]
-                predicted = (probabilities >= 0.5).astype(int)
-                actual = np.asarray(split.y_validation).reshape(-1).astype(int)
-                matrix = confusion_matrix(actual, predicted, labels=[0, 1])
-                st.markdown("#### Validation confusion matrix")
-                st.dataframe([
-                    {"Actual \\ Predicted": "Class 0", "Class 0": int(matrix[0, 0]), "Class 1": int(matrix[0, 1])},
-                    {"Actual \\ Predicted": "Class 1", "Class 0": int(matrix[1, 0]), "Class 1": int(matrix[1, 1])},
-                ], hide_index=True, width="stretch")
-                report = classification_report(actual, predicted, labels=[0, 1], output_dict=True, zero_division=0)
-                st.dataframe([
-                    {"Class": key, "Precision": report[key]["precision"], "Recall": report[key]["recall"], "F1": report[key]["f1-score"], "Support": int(report[key]["support"])}
-                    for key in ("0", "1")
-                ], hide_index=True, width="stretch")
-                boundary = plot_decision_boundary(
-                    result.network, entry["features"], entry["labels"], scaler=split.scaler,
-                )
-                st.pyplot(boundary, width="stretch")
-                plt.close(boundary)
-    else:
-        entry = st.session_state.get(RESULT_KEY)
-        if entry is None:
-            state["step"] = 5
-            st.warning("Complete training and evaluation before saving this experiment.")
-        elif state.get("saved_id") is not None:
-            st.success(f"This experiment is already saved as record #{state['saved_id']}; revisiting this step will not create another record.")
-            if st.button("Open Experiments & Reports", key="wizard_open_reports"):
-                st.session_state["navigation_selection"] = "Experiments & Reports"
-                st.rerun()
-        else:
-            st.write("Save the completed configuration and recorded epoch history to the existing local experiment store.")
-            if st.button("Save completed experiment", type="primary", key="wizard_save"):
-                try:
-                    notes_parts = []
-                    if details["description"].strip():
-                        notes_parts.append("Description: " + details["description"].strip())
-                    if details["notes"].strip():
-                        notes_parts.append("Notes: " + details["notes"].strip())
-                    data_configuration = {
-                        **data, "data_seed": int(details["seed"]),
-                        "split_seed": int(details["seed"]), "standardize": True,
-                    }
-                    training_configuration = {
-                        **network, **training,
-                        "hidden_layer_sizes": list(network["hidden_layer_sizes"]),
-                        "hidden_activation": ACTIVATIONS[network["hidden_activation"]],
-                        "optimizer": training["optimizer"], "loss": "binary_cross_entropy",
-                        "output_activation": "sigmoid", "random_seed": int(details["seed"]),
-                        "epochs_completed": entry["result"].epochs_completed,
-                    }
-                    record_id = ExperimentStore().save(
-                        name=details["name"], dataset=data["name"],
-                        dataset_configuration=data_configuration,
-                        configuration=training_configuration,
-                        history=entry["result"].history, notes="\n\n".join(notes_parts),
+                result_entry = st.session_state.get(RESULT_KEY)
+                if result_entry:
+                    st.success(f"Training completed: {result_entry['result'].epochs_completed} epochs. No training runs again during ordinary reruns.")
+                    if st.button("Continue to evaluation", type="primary", key="wizard_to_evaluate"):
+                        state["step"] = 6
+                        st.rerun()
+                elif st.button("Start training", type="primary", key="wizard_train"):
+                    try:
+                        with st.spinner(f"Training {training['optimizer']} for up to {training['epochs']} epochs…"):
+                            features, labels = _dataset(state)
+                            split = split_classification_data(
+                                features, labels, validation_fraction=float(data["validation_fraction"]),
+                                random_seed=int(details["seed"]), standardize=True,
+                            )
+                            optimizer_name = str(training["optimizer"]).lower()
+                            result = train_model(
+                                split.X_train, split.y_train,
+                                hidden_layer_sizes=tuple(int(size) for size in network["hidden_layer_sizes"]),
+                                hidden_activation=ACTIVATIONS[network["hidden_activation"]],
+                                epochs=int(training["epochs"]), batch_size=int(training["batch_size"]),
+                                optimizer=optimizer_name, learning_rate=float(training["learning_rate"]),
+                                momentum=float(training["momentum"]), beta1=float(training["beta1"]),
+                                beta2=float(training["beta2"]), optimizer_epsilon=float(training["epsilon"]),
+                                loss="binary_cross_entropy", validation_data=split.validation_data,
+                                random_seed=int(details["seed"]),
+                            )
+                        st.session_state[RESULT_KEY] = {"result": result, "features": features, "labels": labels, "split": split}
+                        state["step"] = 6
+                        st.rerun()
+                    except (ValueError, FloatingPointError, RuntimeError) as error:
+                        st.error(f"Training could not be completed: {error}")
+                    except Exception as error:
+                        st.error(f"Unexpected training error: {error}")
+        elif step == 6:
+            entry = st.session_state.get(RESULT_KEY)
+            if entry is None:
+                state["step"] = 5
+                st.warning("Train the configured model before viewing evaluation results.")
+            else:
+                result: TrainingResult = entry["result"]
+                history = result.history
+                if not history["epoch"]:
+                    st.warning("The model did not complete an epoch, so no evaluation metrics are available.")
+                else:
+                    last = -1
+                    metric_cols = st.columns(4)
+                    metric_cols[0].metric("Training loss", f"{history['training_loss'][last]:.5f}")
+                    metric_cols[1].metric("Validation loss", f"{history['validation_loss'][last]:.5f}")
+                    metric_cols[2].metric("Training accuracy", f"{history['training_accuracy'][last]:.1%}")
+                    metric_cols[3].metric("Validation accuracy", f"{history['validation_accuracy'][last]:.1%}")
+                    st.caption(f"Completed epochs: {result.epochs_completed} · Binary prediction threshold: 0.5")
+                    loss_figure = plot_loss_history(history)
+                    st.pyplot(loss_figure, width="stretch")
+                    plt.close(loss_figure)
+                    split = entry["split"]
+                    probabilities = result.network.forward(split.X_validation)[:, 0]
+                    predicted = (probabilities >= 0.5).astype(int)
+                    actual = np.asarray(split.y_validation).reshape(-1).astype(int)
+                    matrix = confusion_matrix(actual, predicted, labels=[0, 1])
+                    st.markdown("#### Validation confusion matrix")
+                    st.dataframe([
+                        {"Actual \\ Predicted": "Class 0", "Class 0": int(matrix[0, 0]), "Class 1": int(matrix[0, 1])},
+                        {"Actual \\ Predicted": "Class 1", "Class 0": int(matrix[1, 0]), "Class 1": int(matrix[1, 1])},
+                    ], hide_index=True, width="stretch")
+                    report = classification_report(actual, predicted, labels=[0, 1], output_dict=True, zero_division=0)
+                    st.dataframe([
+                        {"Class": key, "Precision": report[key]["precision"], "Recall": report[key]["recall"], "F1": report[key]["f1-score"], "Support": int(report[key]["support"])}
+                        for key in ("0", "1")
+                    ], hide_index=True, width="stretch")
+                    boundary = plot_decision_boundary(
+                        result.network, entry["features"], entry["labels"], scaler=split.scaler,
                     )
-                    state["saved_id"] = record_id
-                    st.success(f"Saved experiment #{record_id}.")
-                except (TypeError, ValueError, OSError) as error:
-                    st.error(f"Experiment could not be saved: {error}")
+                    st.pyplot(boundary, width="stretch")
+                    plt.close(boundary)
+        else:
+            entry = st.session_state.get(RESULT_KEY)
+            if entry is None:
+                state["step"] = 5
+                st.warning("Complete training and evaluation before saving this experiment.")
+            elif state.get("saved_id") is not None:
+                st.success(f"This experiment is already saved as record #{state['saved_id']}; revisiting this step will not create another record.")
+                if st.button("Open Experiments & Reports", key="wizard_open_reports"):
+                    st.session_state["navigation_selection"] = "Experiments & Reports"
+                    st.rerun()
+            else:
+                st.write("Save the completed configuration and recorded epoch history to the existing local experiment store.")
+                if st.button("Save completed experiment", type="primary", key="wizard_save"):
+                    try:
+                        notes_parts = []
+                        if details["description"].strip():
+                            notes_parts.append("Description: " + details["description"].strip())
+                        if details["notes"].strip():
+                            notes_parts.append("Notes: " + details["notes"].strip())
+                        data_configuration = {
+                            **data, "data_seed": int(details["seed"]),
+                            "split_seed": int(details["seed"]), "standardize": True,
+                        }
+                        training_configuration = {
+                            **network, **training,
+                            "hidden_layer_sizes": list(network["hidden_layer_sizes"]),
+                            "hidden_activation": ACTIVATIONS[network["hidden_activation"]],
+                            "optimizer": training["optimizer"], "loss": "binary_cross_entropy",
+                            "output_activation": "sigmoid", "random_seed": int(details["seed"]),
+                            "epochs_completed": entry["result"].epochs_completed,
+                        }
+                        record_id = ExperimentStore().save(
+                            name=details["name"], dataset=data["name"],
+                            dataset_configuration=data_configuration,
+                            configuration=training_configuration,
+                            history=entry["result"].history, notes="\n\n".join(notes_parts),
+                        )
+                        state["saved_id"] = record_id
+                        st.success(f"Saved experiment #{record_id}.")
+                    except (TypeError, ValueError, OSError) as error:
+                        st.error(f"Experiment could not be saved: {error}")
 
     _collect_widget_values(state)
     st.divider()
