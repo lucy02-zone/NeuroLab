@@ -5,7 +5,7 @@ import numpy as np
 import streamlit as st
 
 from src.neurolab.models import losses
-from .visualization import BLUE, CYAN, GRID, NAVY, TEXT, VIOLET, style_axis
+from .visualization import style_axis
 
 
 LOSS_NAMES = ("Mean Squared Error (MSE)", "Mean Absolute Error (MAE)", "Binary Cross-Entropy", "Categorical Cross-Entropy")
@@ -18,16 +18,16 @@ LOSS_INFO = {
 
 
 def _plot(values: np.ndarray, curves: dict[str, np.ndarray], title: str, target: float | None = None) -> None:
-    figure, axis = plt.subplots(figsize=(9.5, 4.2), facecolor=NAVY)
-    style_axis(axis, title)
-    curve_colors = (BLUE, CYAN, VIOLET, "#62d6a6")
+    figure, axis = plt.subplots(figsize=(9.5, 4.2), facecolor="#F3F6FA")
+    style_axis(axis, title, "light")
+    curve_colors = ("#2F5F83", "#397F8B", "#8B79CA", "#5B8F75")
     for (label, curve), color in zip(curves.items(), curve_colors):
         axis.plot(values, curve, linewidth=2.4, color=color, label=label)
     if target is not None:
-        axis.axvline(target, color=VIOLET, linestyle="--", linewidth=1.2, label="Target")
+        axis.axvline(target, color="#8B79CA", linestyle="--", linewidth=1.2, label="Target")
     axis.set_xlabel("Prediction" if target is not None else "Predicted probability")
     axis.set_ylabel("Loss")
-    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#FFFFFF", edgecolor="#C8D9E6", labelcolor="#2F4156")
     figure.tight_layout()
     st.pyplot(figure, width="stretch")
     plt.close(figure)
@@ -35,18 +35,36 @@ def _plot(values: np.ndarray, curves: dict[str, np.ndarray], title: str, target:
 
 def render_loss_playground() -> None:
     """Render interactive loss explanations, numerical examples, and curves."""
-    st.markdown('<div class="eyebrow">MEASURING PREDICTION ERROR</div>', unsafe_allow_html=True)
-    st.title("Loss Functions")
-    st.markdown("A loss function turns the gap between targets and predictions into a number that can guide learning.")
+    with st.container(key="loss_playground_page"):
+        _render_loss_content()
 
-    selected = st.selectbox("Choose a loss", LOSS_NAMES)
-    task_type, formula, explanation = LOSS_INFO[selected]
+
+def _render_loss_content() -> None:
     st.markdown(
-        f'<div class="hero-chip"><span class="status-dot"></span> {task_type}</div>',
+        """<section class="hero playground-hero loss-hero">
+            <div class="hero-copy">
+                <div class="hero-kicker">MEASURING PREDICTION ERROR</div>
+                <h1>Loss Functions<span class="hero-period">.</span></h1>
+                <div class="hero-tagline">Turn prediction errors into a learning signal.</div>
+                <p class="hero-description">Compare regression and classification losses with formulas, live examples, and real loss curves.</p>
+                <div class="hero-chip"><span class="status-dot"></span>Interactive calculations · Clear use cases</div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span>
+                <span class="neuron n1"></span><span class="neuron n2"></span><span class="neuron n3"></span>
+                <span class="neuron n4"></span><span class="neuron n5"></span><span class="neuron n6"></span>
+                <span class="neuron n7"></span><span class="neuron n8"></span><span class="neuron n9"></span>
+            </div>
+        </section>""",
         unsafe_allow_html=True,
     )
-    st.latex(formula)
-    st.markdown(explanation)
+
+    with st.container(border=True, key="loss_intro_panel"):
+        selected = st.selectbox("Choose a loss", LOSS_NAMES, key="loss_playground_select")
+        task_type, formula, explanation = LOSS_INFO[selected]
+        st.markdown(f'<span class="loss-task-badge">{task_type}</span>', unsafe_allow_html=True)
+        st.latex(formula)
+        st.markdown(f'<p class="loss-explanation">{explanation}</p>', unsafe_allow_html=True)
 
     if selected in LOSS_NAMES[:2]:
         target_col, prediction_col = st.columns(2, gap="medium")

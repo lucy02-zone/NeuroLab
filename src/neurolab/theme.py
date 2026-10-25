@@ -974,6 +974,78 @@ def apply_theme() -> None:
             [class*="st-key-learn_dnn_controls_panel"] { padding: 0.8rem 0.8rem 0.45rem; }
             .learn-module-title { align-items: flex-start; flex-direction: column; gap: 0.55rem; }
         }
+
+        /* Loss Functions: readable task selector, outlined examples, light charts. */
+        [class*="st-key-loss_playground_page"] .loss-hero {
+            min-height: 245px;
+            margin: 0.5rem 0 1.2rem;
+        }
+        [class*="st-key-loss_intro_panel"] {
+            margin: 0 0 1rem;
+            padding: 1rem 1.2rem 0.75rem;
+            border: 2px solid #b5c7d9 !important;
+            border-radius: 1rem !important;
+            background: #ffffff !important;
+            box-shadow: 0 5px 16px rgba(23, 38, 63, 0.06) !important;
+        }
+        [class*="st-key-loss_playground_page"] label,
+        [class*="st-key-loss_playground_page"] [data-testid="stCaptionContainer"] {
+            color: #40566f !important;
+            font-weight: 600 !important;
+        }
+        [class*="st-key-loss_playground_page"] [data-baseweb="input"] > div,
+        [class*="st-key-loss_playground_page"] [data-baseweb="select"] > div {
+            background: #f7fafd !important;
+            border: 1.6px solid #a8bdcf !important;
+            border-radius: 0.68rem !important;
+        }
+        [class*="st-key-loss_playground_page"] [data-baseweb="input"] > div:focus-within,
+        [class*="st-key-loss_playground_page"] [data-baseweb="select"] > div:focus-within {
+            background: #ffffff !important;
+            border: 2px solid #4e73d8 !important;
+            box-shadow: 0 0 0 3px rgba(78, 115, 216, 0.14) !important;
+        }
+        [class*="st-key-loss_playground_page"] input,
+        [class*="st-key-loss_playground_page"] [data-baseweb="select"] div {
+            color: #17263f !important;
+            -webkit-text-fill-color: #17263f !important;
+            font-weight: 600 !important;
+        }
+        .loss-task-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.38rem 0.7rem;
+            margin: 0.2rem 0 0.45rem;
+            border: 1px solid #bcd1df;
+            border-radius: 2rem;
+            background: #edf4f8;
+            color: #2f5f83;
+            font: 700 0.7rem 'DM Sans', sans-serif;
+        }
+        .loss-explanation { margin: 0.2rem 0 0; color: #536a82 !important; }
+        [class*="st-key-loss_playground_page"] .info-panel {
+            height: 100%;
+            border: 1.5px solid #c4d3e1;
+            border-radius: 0.9rem;
+            background: #ffffff;
+        }
+        [class*="st-key-loss_playground_page"] [data-testid="stMetric"] {
+            min-height: 5rem;
+            border: 1.5px solid #c4d3e1;
+        }
+        [class*="st-key-loss_playground_page"] [data-testid="stExpander"] {
+            margin: 0.8rem 0;
+            border: 1.5px solid #b5c7d9 !important;
+            border-radius: 0.9rem !important;
+            background: #ffffff !important;
+        }
+        [class*="st-key-loss_playground_page"] [data-testid="stExpander"] summary p {
+            color: #17263f !important;
+            font-weight: 700 !important;
+        }
+        @media (max-width: 820px) {
+            [class*="st-key-loss_intro_panel"] { padding: 0.8rem 0.85rem 0.55rem; }
+        }
         </style>
         """,
         unsafe_allow_html=True,
