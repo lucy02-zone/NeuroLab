@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 import hashlib
+from html import escape
 from typing import Any, Iterable
 
 import numpy as np
@@ -226,10 +227,31 @@ def _submit(question: Question, answer: int | float, mode: str, attempt_key: str
 
 def render_quiz_center() -> None:
     """Render practice, timed, daily, and mistake-review learning modes."""
+    with st.container(key="quiz_center_page"):
+        _render_quiz_center_content()
+
+
+def _render_quiz_center_content() -> None:
     validate_question_bank()
-    st.markdown('<div class="eyebrow">TEST YOUR DNN INTUITION</div>', unsafe_allow_html=True)
-    st.title("Quiz & Challenge Center")
-    st.write("Practice the ideas behind neural networks, check your calculations, and review what you missed.")
+    st.markdown(
+        """<section class="hero playground-hero quiz-hero">
+            <div class="hero-copy">
+                <div class="hero-kicker">NEUROLAB ACADEMY · CHECK YOUR UNDERSTANDING</div>
+                <h1>Quiz &amp; Challenge Center<span class="hero-period">.</span></h1>
+                <div class="hero-tagline">Think it through. Choose an answer. Learn from the result.</div>
+                <p class="hero-description">Practice neural network concepts with short questions, calculation challenges, and clear explanations after each answer.</p>
+                <div class="hero-chip"><span class="status-dot"></span>Practice at your own pace or take a timed challenge</div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span>
+                <span class="neuron n1"></span><span class="neuron n2"></span><span class="neuron n3"></span>
+                <span class="neuron n4"></span><span class="neuron n5"></span><span class="neuron n6"></span>
+                <span class="neuron n7"></span><span class="neuron n8"></span><span class="neuron n9"></span>
+            </div>
+        </section>""",
+        unsafe_allow_html=True,
+    )
+    st.markdown('<div class="quiz-section-heading"><span>YOUR LEARNING PROGRESS</span><h2>Knowledge at a glance</h2></div>', unsafe_allow_html=True)
     answers: dict[str, dict[str, Any]] = st.session_state.setdefault("quiz_center_answers", {})
     history: list[dict[str, Any]] = st.session_state.setdefault("quiz_center_history", [])
     progress = calculate_progress(answers)
@@ -253,6 +275,7 @@ def render_quiz_center() -> None:
             st.markdown("**Completed challenges this session**")
             st.dataframe(completions, hide_index=True, width="stretch")
 
+    st.markdown('<div class="quiz-section-heading"><span>CHOOSE YOUR FORMAT</span><h2>Pick a challenge</h2></div>', unsafe_allow_html=True)
     mode = st.selectbox("Challenge mode", MODES, key="quiz_center_mode")
     if mode == "Review Mistakes":
         mistake_ids = progress["incorrect_ids"]
@@ -321,35 +344,41 @@ def _render_question_sequence(questions: list[Question], mode: str, attempt_key:
         st.session_state[sequence_key] = 0
     index = st.session_state[sequence_key]
     question = questions[index]
-    st.progress((index + 1) / len(questions), text=f"Question {index + 1} of {len(questions)} · {question.difficulty}")
-    st.markdown(f"**{question.category}**")
-    st.subheader(question.prompt)
-    if question.formula:
-        st.latex(question.formula)
-    widget_key = f"quiz_answer_{attempt_key}_{question.question_id}"
-    if question.is_numeric:
-        answer: int | float = st.number_input("Your numerical answer", value=0.0, format="%.6f", key=widget_key)
-    else:
-        choice = st.radio("Choose one answer", question.options, key=widget_key)
-        answer = question.options.index(choice)
-    response_key = f"{attempt_key}:{question.question_id}"
-    if st.button("Submit answer", key=f"quiz_submit_{response_key}"):
-        _submit(question, answer, mode, response_key)
-        if timed:
-            st.session_state.setdefault("quiz_timed_responses", {})[question.question_id] = st.session_state[response_key]
-    submitted = st.session_state.get(response_key)
-    if submitted:
-        if submitted["correct"]:
-            st.success("Correct. " + question.explanation)
+    with st.container(border=True, key="quiz_question_card"):
+        st.markdown(
+            f'<div class="quiz-question-meta"><span class="quiz-question-number">QUESTION {index + 1:02d}</span>'
+            f'<span class="quiz-question-category">{escape(question.category)}</span>'
+            f'<span class="quiz-difficulty difficulty-{question.difficulty.lower()}">{escape(question.difficulty)}</span></div>',
+            unsafe_allow_html=True,
+        )
+        st.progress((index + 1) / len(questions), text=f"Question {index + 1} of {len(questions)}")
+        st.markdown(f'<div class="quiz-question-prompt">{escape(question.prompt)}</div>', unsafe_allow_html=True)
+        if question.formula:
+            st.latex(question.formula)
+        widget_key = f"quiz_answer_{attempt_key}_{question.question_id}"
+        if question.is_numeric:
+            answer: int | float = st.number_input("Your numerical answer", value=0.0, format="%.6f", key=widget_key)
         else:
-            st.error("Not quite. " + question.explanation)
-            if not question.is_numeric:
-                st.caption("Correct answer: " + question.options[question.correct_index])
-        if st.button("Next question" if index < len(questions) - 1 else "Finish challenge", key=f"quiz_next_{response_key}"):
-            if index < len(questions) - 1:
-                st.session_state[sequence_key] = index + 1
+            choice = st.radio("Choose one answer", question.options, key=widget_key)
+            answer = question.options.index(choice)
+        response_key = f"{attempt_key}:{question.question_id}"
+        if st.button("Check answer  →", type="primary", key=f"quiz_submit_{response_key}"):
+            _submit(question, answer, mode, response_key)
+            if timed:
+                st.session_state.setdefault("quiz_timed_responses", {})[question.question_id] = st.session_state[response_key]
+        submitted = st.session_state.get(response_key)
+        if submitted:
+            if submitted["correct"]:
+                st.success("Correct. " + question.explanation)
             else:
-                st.session_state[f"quiz_completed_{attempt_key}"] = True
+                st.error("Not quite. " + question.explanation)
+                if not question.is_numeric:
+                    st.caption("Correct answer: " + question.options[question.correct_index])
+            if st.button("Next question →" if index < len(questions) - 1 else "Finish challenge →", type="primary", key=f"quiz_next_{response_key}"):
+                if index < len(questions) - 1:
+                    st.session_state[sequence_key] = index + 1
+                else:
+                    st.session_state[f"quiz_completed_{attempt_key}"] = True
     if st.session_state.get(f"quiz_completed_{attempt_key}"):
         scoped = st.session_state.get("quiz_timed_responses", {}) if timed else {
             q.question_id: st.session_state.get(f"{attempt_key}:{q.question_id}", {}) for q in questions
