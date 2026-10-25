@@ -224,12 +224,6 @@ def _render_network_playground_content() -> None:
 
     saved_run = st.session_state.get(RESULT_KEY)
     if saved_run is None:
-        st.markdown("### 4 · Training results")
-        st.info("The dataset preview and architecture are ready. Select **Train Network** to create real training results.")
-        st.markdown("### 5 · Loss curves")
-        st.caption("Loss curves will appear after a training run.")
-        st.markdown("### 6 · Decision boundary")
-        st.caption("A decision boundary requires a trained model; no predictions are shown yet.")
         return
 
     result: TrainingResult = saved_run["result"]
