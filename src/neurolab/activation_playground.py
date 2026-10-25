@@ -97,7 +97,7 @@ def render_activation_playground() -> None:
         axis.axvline(0, color=GRID, linewidth=0.8)
         color = "#397F8B" if selected in ("Softmax", "Leaky ReLU") else "#2F5F83"
         axis.plot(x_values, curve_y, color=color, linewidth=2.6)
-        axis.scatter([point], [point_output[0] if selected == "Softmax" else point_output], color=VIOLET, edgecolors="#edf3ff", s=48, zorder=4)
+        axis.scatter([point], [point_output[0] if selected == "Softmax" else point_output], color="#8B79CA", edgecolors="#FFFFFF", s=48, zorder=4)
         axis.set_xlabel("Input x")
         axis.set_ylabel("Output")
         figure.tight_layout()
