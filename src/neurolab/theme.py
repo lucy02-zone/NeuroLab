@@ -1046,6 +1046,64 @@ def apply_theme() -> None:
         @media (max-width: 820px) {
             [class*="st-key-loss_intro_panel"] { padding: 0.8rem 0.85rem 0.55rem; }
         }
+
+        /* Shared stronger control treatment across every NeuroLab section. */
+        [data-baseweb="input"] > div,
+        [data-baseweb="select"] > div,
+        [data-baseweb="textarea"] > div {
+            background: #f7fafd !important;
+            border: 1.7px solid #a8bdcf !important;
+            border-radius: 0.68rem !important;
+            box-shadow: 0 1px 3px rgba(23, 38, 63, 0.06) !important;
+        }
+        [data-baseweb="input"] > div:focus-within,
+        [data-baseweb="select"] > div:focus-within,
+        [data-baseweb="textarea"] > div:focus-within {
+            background: #ffffff !important;
+            border: 2px solid #4e73d8 !important;
+            box-shadow: 0 0 0 3px rgba(78, 115, 216, 0.14) !important;
+        }
+        [data-baseweb="input"] input,
+        [data-baseweb="textarea"] textarea,
+        [data-baseweb="select"] input {
+            color: #17263f !important;
+            -webkit-text-fill-color: #17263f !important;
+            font-weight: 600 !important;
+        }
+        [data-testid="stMain"] label,
+        [data-testid="stMain"] [data-testid="stCaptionContainer"] {
+            color: #40566f !important;
+            font-weight: 600 !important;
+        }
+        [data-testid="stExpander"] {
+            border: 1.6px solid #b5c7d9 !important;
+            border-radius: 0.9rem !important;
+            background: #ffffff !important;
+            box-shadow: 0 4px 13px rgba(23, 38, 63, 0.045) !important;
+        }
+        [data-testid="stExpander"] summary p {
+            color: #17263f !important;
+            font-weight: 700 !important;
+        }
+        [data-testid="stMetric"] {
+            border: 1.5px solid #c4d3e1 !important;
+            background: #ffffff !important;
+        }
+        [data-testid="stTable"],
+        [data-testid="stDataFrame"] {
+            border: 1.5px solid #c4d3e1 !important;
+            border-radius: 0.8rem !important;
+            overflow: hidden;
+        }
+        [data-testid="stTabs"] [role="tab"] {
+            color: #536a82 !important;
+            font-weight: 700 !important;
+        }
+        [data-testid="stTabs"] [role="tab"][aria-selected="true"] {
+            color: #17263f !important;
+            background: #edf3f8 !important;
+            border-radius: 0.55rem 0.55rem 0 0;
+        }
         </style>
         """,
         unsafe_allow_html=True,
