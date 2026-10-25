@@ -31,8 +31,13 @@ RUN_COUNT_KEY = "network_playground_run_count"
 
 
 @st.cache_data(show_spinner=False)
-def _cached_dataset(name: str, samples: int, noise: float, seed: int):
-    return make_classification_dataset(name, n_samples=samples, noise=noise, random_seed=seed)
+def _cached_dataset(name: str, samples: int, noise: float, seed: int,
+                    class_1_fraction: float | None = None, circle_factor: float = 0.5,
+                    spiral_turns: float = 2.0):
+    return make_classification_dataset(
+        name, n_samples=samples, noise=noise, random_seed=seed,
+        class_1_fraction=class_1_fraction, circle_factor=circle_factor, spiral_turns=spiral_turns,
+    )
 
 
 def _show_figure(figure: plt.Figure) -> None:
@@ -71,14 +76,28 @@ def render_network_playground() -> None:
     data_controls, data_preview = st.columns([0.85, 1.15], gap="large")
     with data_controls:
         dataset_label = st.selectbox("Synthetic dataset", tuple(DATASETS), key="play_dataset")
-        sample_count = st.slider("Number of samples", 100, 1000, 300, 50, key="play_samples")
+        sample_count = st.slider("Number of samples", 40, 2000, 300, 20, key="play_samples")
         noise = st.slider("Dataset noise", 0.0, 0.5, 0.08, 0.01, key="play_noise")
         random_seed = st.number_input("Random seed", min_value=0, max_value=999_999, value=21, step=1, key="play_seed")
+        class_balance = st.selectbox(
+            "Class balance", ("Generator default", *(f"{share}% class 1" for share in range(10, 95, 5))),
+            key="play_class_balance", help="Set a target class share or use each generator's default distribution.",
+        )
+        class_1_fraction = None if class_balance == "Generator default" else int(class_balance.split("%", 1)[0]) / 100
+        circle_factor = 0.5
+        spiral_turns = 2.0
+        if dataset_label == "Concentric circles":
+            circle_factor = st.slider("Inner-circle radius factor", 0.15, 0.85, 0.5, 0.05, key="play_circle_factor")
+        if dataset_label == "Spiral classification":
+            spiral_turns = st.slider("Spiral turns", 1.0, 4.0, 2.0, 0.25, key="play_spiral_turns")
         validation_fraction = st.slider(
             "Validation split", 0.1, 0.4, 0.2, 0.05, key="play_validation_fraction",
             help="The split is stratified. Standardization is fitted on training samples only.",
         )
-    features, labels = _cached_dataset(DATASETS[dataset_label], sample_count, noise, int(random_seed))
+    features, labels = _cached_dataset(
+        DATASETS[dataset_label], sample_count, noise, int(random_seed),
+        class_1_fraction, float(circle_factor), float(spiral_turns),
+    )
     with data_preview:
         preview_figure = plot_dataset_preview(features, labels, f"{dataset_label} · {sample_count} samples")
         _show_figure(preview_figure)
@@ -183,6 +202,9 @@ def render_network_playground() -> None:
                 "dataset_configuration": {
                     "n_samples": int(sample_count),
                     "noise": float(noise),
+                    "class_1_fraction": class_1_fraction,
+                    "circle_factor": float(circle_factor),
+                    "spiral_turns": float(spiral_turns),
                     "validation_fraction": float(validation_fraction),
                     "data_seed": int(random_seed),
                     "split_seed": int(random_seed),

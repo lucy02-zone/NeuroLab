@@ -29,6 +29,9 @@ def make_classification_dataset(
     n_samples: int = 300,
     noise: float = 0.1,
     random_seed: int | None = 0,
+    class_1_fraction: float | None = None,
+    circle_factor: float = 0.5,
+    spiral_turns: float = 2.0,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Create XOR, moons, circles, or spiral data with binary labels.
 
@@ -40,27 +43,53 @@ def make_classification_dataset(
         raise ValueError("n_samples must be an integer of at least 4.")
     if not np.isfinite(noise) or noise < 0:
         raise ValueError("noise must be a finite non-negative number.")
+    if class_1_fraction is not None:
+        if not np.isfinite(class_1_fraction) or not 0.0 < class_1_fraction < 1.0:
+            raise ValueError("class_1_fraction must be between 0 and 1.")
+        class_1_count = int(round(int(n_samples) * float(class_1_fraction)))
+        counts = (int(n_samples) - class_1_count, class_1_count)
+        if min(counts) < 2:
+            raise ValueError("class_1_fraction must leave at least two samples in each class.")
+    else:
+        counts = None
+    if not np.isfinite(circle_factor) or not 0.0 < circle_factor < 1.0:
+        raise ValueError("circle_factor must be between 0 and 1.")
+    if not np.isfinite(spiral_turns) or spiral_turns <= 0:
+        raise ValueError("spiral_turns must be a finite positive number.")
     rng = np.random.default_rng(random_seed)
     key = name.strip().lower()
     if key == "moons":
-        features, labels = make_moons(n_samples=int(n_samples), noise=noise, random_state=random_seed)
+        features, labels = make_moons(n_samples=counts or int(n_samples), noise=noise, random_state=random_seed)
     elif key == "circles":
         features, labels = make_circles(
-            n_samples=int(n_samples), noise=noise, factor=0.5, random_state=random_seed
+            n_samples=counts or int(n_samples), noise=noise, factor=circle_factor, random_state=random_seed
         )
     elif key == "xor":
-        features = rng.uniform(-1.0, 1.0, size=(int(n_samples), 2))
-        labels = np.logical_xor(features[:, 0] >= 0.0, features[:, 1] >= 0.0).astype(int)
+        if counts is None:
+            features = rng.uniform(-1.0, 1.0, size=(int(n_samples), 2))
+            labels = np.logical_xor(features[:, 0] >= 0.0, features[:, 1] >= 0.0).astype(int)
+        else:
+            feature_groups = []
+            label_groups = []
+            for label, count in enumerate(counts):
+                magnitudes = rng.uniform(0.05, 1.0, size=(count, 2))
+                first_sign = rng.choice((-1.0, 1.0), size=count)
+                second_sign = first_sign * (-1.0 if label else 1.0)
+                feature_groups.append(magnitudes * np.column_stack((first_sign, second_sign)))
+                label_groups.append(np.full(count, label, dtype=int))
+            features = np.vstack(feature_groups)
+            labels = np.concatenate(label_groups)
+            permutation = rng.permutation(int(n_samples))
+            features, labels = features[permutation], labels[permutation]
         if noise:
             features += rng.normal(0.0, noise, size=features.shape)
     elif key == "spiral":
-        first_count = int(n_samples) // 2
-        counts = (first_count, int(n_samples) - first_count)
+        spiral_counts = counts or (int(n_samples) // 2, int(n_samples) - int(n_samples) // 2)
         feature_groups = []
         label_groups = []
-        for label, count in enumerate(counts):
+        for label, count in enumerate(spiral_counts):
             radius = np.linspace(0.05, 1.0, count)
-            angle = 4.0 * np.pi * radius + label * np.pi
+            angle = (2.0 * np.pi * spiral_turns) * radius + label * np.pi
             group = np.column_stack((radius * np.cos(angle), radius * np.sin(angle)))
             group += rng.normal(0.0, noise, size=group.shape)
             feature_groups.append(group)
