@@ -312,11 +312,40 @@ def apply_theme() -> None:
         [class*="st-key-optimizer_run"] button:hover { transform:translateY(-1px); filter:brightness(1.08); box-shadow:0 10px 22px #17263F30 !important; }
         [class*="st-key-optimizer_lab_page"] [data-testid="stTable"], [class*="st-key-optimizer_lab_page"] [data-testid="stDataFrame"] { border:1px solid var(--line); border-radius:.8rem; overflow:hidden; }
         @media (max-width: 800px) {
-            .block-container { padding:1.1rem 1rem 2rem; }
-            .hero { padding:1.6rem; min-height:290px; }
-            .hero-art { opacity:.32; right:0;width:58%; }
+            .block-container { padding:1rem .9rem 2rem !important; }
+            .hero { padding:1.45rem; min-height:260px; margin:.35rem 0 1.35rem; border-radius:1rem; }
+            .hero h1 { font-size:clamp(2.35rem,9vw,3.4rem); }
+            .hero-copy { max-width:100%; }
+            .hero-art { opacity:.2; right:-8%; width:58%; }
             .section-heading { align-items:start; gap:.75rem; flex-direction:column; }
-            .feature-card { min-height:156px; }
+            .feature-card { min-height:0; padding:1rem; margin-bottom:.75rem; }
+            .dashboard-module-card { min-height:0; }
+            .playground-hero { min-height:225px !important; padding:1.35rem !important; }
+            [class*="st-key-wizard_step_panel"] { padding:1rem !important; }
+            [data-testid="stMetric"] { min-height:0; padding:.7rem .75rem; }
+            [data-testid="stMetricValue"] { font-size:1.25rem; }
+            [data-testid="stTabs"] [data-baseweb="tab-list"] { gap:.2rem; overflow-x:auto; flex-wrap:nowrap; scrollbar-width:thin; }
+            [data-testid="stTabs"] button[role="tab"] { flex:0 0 auto; min-height:2.6rem; padding:.55rem .72rem; font-size:.78rem; white-space:nowrap; }
+            .stButton > button, [data-testid="stBaseButton-primary"], [data-testid="stBaseButton-secondary"] { min-height:2.8rem; }
+            [data-testid="stDataFrame"], [data-testid="stTable"] { max-width:100%; overflow-x:auto; }
+        }
+        @media (max-width: 520px) {
+            .block-container { padding:.8rem .7rem 1.5rem !important; }
+            .hero { min-height:235px; padding:1.1rem !important; }
+            .hero h1 { font-size:clamp(2.1rem,11vw,2.8rem); }
+            .hero-kicker, .eyebrow { font-size:.59rem; letter-spacing:.14em; }
+            .hero-tagline { font-size:.9rem; }
+            .hero-description { font-size:.82rem; line-height:1.55; }
+            .hero-art { opacity:.12; right:-20%; width:72%; }
+            .brand-lockup { gap:.6rem; }
+            .brand-mark { flex-basis:2.5rem; width:2.5rem; height:2.5rem; }
+            .brand-tagline { font-size:.6rem; }
+            .quiz-question-prompt { font-size:1.12rem; }
+            [class*="st-key-quiz_question_card"] { padding:.85rem; }
+            [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] { padding:.85rem !important; }
+            [data-testid="stMetricLabel"] { font-size:.7rem; }
+            [data-testid="stMetricValue"] { font-size:1.1rem; }
+            [data-testid="stHorizontalBlock"] { gap:.55rem; }
         }
         </style>
         """,
