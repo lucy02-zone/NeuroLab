@@ -198,6 +198,19 @@ def apply_theme() -> None:
         [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] [data-baseweb="select"] > div:focus-within { background:#FFFFFF !important; border-color:var(--blue) !important; box-shadow:0 0 0 3px #4E73D826 !important; }
         [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] input,
         [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] textarea { color:var(--navy) !important; }
+        /* Keep the three experiment-detail fields visibly outlined at rest. */
+        [class*="st-key-wizard_name"] [data-baseweb="input"] > div,
+        [class*="st-key-wizard_seed"] [data-baseweb="input"] > div,
+        [class*="st-key-wizard_description"] [data-baseweb="textarea"] > div,
+        [class*="st-key-wizard_notes"] [data-baseweb="textarea"] > div { background:#F7FAFD !important; border:2px solid #9CB4CB !important; border-radius:.68rem !important; box-shadow:0 2px 6px #17263F0D !important; }
+        [class*="st-key-wizard_name"] input,
+        [class*="st-key-wizard_seed"] input,
+        [class*="st-key-wizard_description"] textarea,
+        [class*="st-key-wizard_notes"] textarea { background:transparent !important; border:0 !important; border-radius:inherit !important; color:#17263F !important; box-shadow:none !important; }
+        [class*="st-key-wizard_name"]:focus-within [data-baseweb="input"] > div,
+        [class*="st-key-wizard_seed"]:focus-within [data-baseweb="input"] > div,
+        [class*="st-key-wizard_description"]:focus-within [data-baseweb="textarea"] > div,
+        [class*="st-key-wizard_notes"]:focus-within [data-baseweb="textarea"] > div { background:#FFFFFF !important; border-color:#4E73D8 !important; box-shadow:0 0 0 3px #4E73D826 !important; }
         [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] label { color:#40566F !important; font-weight:600 !important; }
         .wizard-step-heading { display:flex; align-items:center; gap:.85rem; margin:.2rem 0 .8rem; }
         .wizard-step-heading > span { padding:.38rem .62rem; border-radius:2rem; background:#EAF1F7; color:var(--teal); font:700 .65rem 'DM Sans',sans-serif; letter-spacing:.12em; }
