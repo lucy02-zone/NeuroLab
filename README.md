@@ -46,6 +46,22 @@ streamlit run app.py
 
 On Windows PowerShell, activate with `.venv\Scripts\Activate.ps1` after creating the environment.
 
+## Deploy on Vercel
+
+The repository includes `Dockerfile.vercel`, which packages the Streamlit server as a Vercel container function. Push the project to a Git provider connected to Vercel, import the repository, and deploy it. Vercel detects the Dockerfile automatically; no frontend build command or output directory is needed. The container listens on Vercel's `PORT` (defaulting to port 80).
+
+You can also deploy from the project root with the Vercel CLI:
+
+```bash
+npm install --global vercel
+vercel login
+vercel
+```
+
+Use the preview URL to check the app before deploying to production with `vercel --prod`.
+
+The runtime dependency list is in `requirements-vercel.txt`; `pytest` remains a development dependency and is not installed in the deployed image. Experiment records use SQLite in `/tmp` on Vercel, so they are temporary and may disappear when an instance is replaced or scaled down. For durable shared experiment history, configure a hosted database in a later deployment step. Session state and loaded models are also per browser session.
+
 ## Tests
 
 With the environment active:
