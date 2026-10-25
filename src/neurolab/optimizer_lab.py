@@ -53,11 +53,31 @@ def _summary_rows(comparison: OptimizerComparison) -> list[dict[str, str]]:
 
 def render_optimizer_lab() -> None:
     """Render experiment configuration and real optimizer comparison results."""
-    st.markdown('<div class="eyebrow">COMPARE PARAMETER UPDATE STRATEGIES</div>', unsafe_allow_html=True)
-    st.title("Optimizer Lab")
-    st.markdown("Run the same neural network experiment with independent SGD, Momentum, and Adam optimizers.")
+    with st.container(key="optimizer_lab_page"):
+        _render_optimizer_lab_content()
 
-    st.markdown("### 1 · Experiment setup")
+
+def _render_optimizer_lab_content() -> None:
+    st.markdown(
+        """<section class="hero playground-hero">
+            <div class="hero-copy">
+                <div class="hero-kicker">OPTIMIZER STUDIO · COMPARE REAL RUNS</div>
+                <h1>Optimizer Lab<span class="hero-period">.</span></h1>
+                <div class="hero-tagline">Same network. Same data. Different update strategies.</div>
+                <p class="hero-description">Compare how SGD, Momentum, and Adam learn from an identical reproducible experiment.</p>
+                <div class="hero-chip"><span class="status-dot"></span>Results use recorded training and validation history</div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span>
+                <span class="neuron n1"></span><span class="neuron n2"></span><span class="neuron n3"></span>
+                <span class="neuron n4"></span><span class="neuron n5"></span><span class="neuron n6"></span>
+                <span class="neuron n7"></span><span class="neuron n8"></span><span class="neuron n9"></span>
+            </div>
+        </section>""",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown('<div class="optimizer-section-heading"><span>01 · EXPERIMENT DATA</span><h2>Choose the learning problem</h2></div>', unsafe_allow_html=True)
     data_columns = st.columns([0.85, 1.15], gap="large")
     with data_columns[0]:
         dataset_label = st.selectbox("Synthetic dataset", tuple(DATASETS), key="optimizer_dataset")
@@ -69,7 +89,7 @@ def render_optimizer_lab() -> None:
     with data_columns[1]:
         _show_figure(plot_dataset_preview(features, labels, f"{dataset_label} · {sample_count} samples"))
 
-    st.markdown("### 2 · Shared network and training settings")
+    st.markdown('<div class="optimizer-section-heading"><span>02 · SHARED CONFIGURATION</span><h2>Keep the comparison fair</h2></div>', unsafe_allow_html=True)
     shared = st.columns(5, gap="medium")
     with shared[0]:
         layer_count = st.slider("Hidden layers", 0, 5, 2, key="optimizer_layers")
@@ -86,7 +106,7 @@ def render_optimizer_lab() -> None:
         learning_rate = st.number_input("Learning rate", 0.0001, 1.0, 0.01, 0.001, format="%.4f", key="optimizer_lr")
     st.caption("All runs use binary cross-entropy and the sigmoid binary-classification output. The same stratified split, initialization seed, and mini-batch order are used for each optimizer.")
 
-    st.markdown("### 3 · Optimizer configuration")
+    st.markdown('<div class="optimizer-section-heading"><span>03 · UPDATE STRATEGIES</span><h2>Choose optimizers and parameters</h2></div>', unsafe_allow_html=True)
     selected = st.multiselect("Optimizers to compare", OPTIMIZERS, default=list(OPTIMIZERS), key="optimizer_selection")
     parameter_columns = st.columns(3, gap="medium")
     momentum = 0.9
@@ -105,7 +125,7 @@ def render_optimizer_lab() -> None:
             epsilon = st.number_input("Adam ε", 1e-10, 1e-3, 1e-8, format="%.1e", key="optimizer_epsilon")
             st.caption("Tracks bias-corrected first and second gradient moments.")
 
-    st.markdown("### 4 · Comparison controls")
+    st.markdown('<div class="optimizer-section-heading"><span>04 · RUN EXPERIMENT</span><h2>Compare selected optimizers</h2></div>', unsafe_allow_html=True)
     run_clicked = st.button("Run Comparison", type="primary", width="stretch", key="optimizer_run")
     if run_clicked:
         if not selected:
@@ -156,7 +176,7 @@ def render_optimizer_lab() -> None:
                 st.error(f"Unexpected comparison error: {error}")
 
     saved = st.session_state.get(RESULT_KEY)
-    st.markdown("### 5 · Loss and validation plots")
+    st.markdown('<div class="optimizer-section-heading"><span>05 · LEARNING CURVES</span><h2>Loss and validation results</h2></div>', unsafe_allow_html=True)
     if saved is None:
         st.info("Configure the experiment and select **Run Comparison** to record real optimizer results.")
         return
@@ -166,17 +186,18 @@ def render_optimizer_lab() -> None:
     _show_figure(plot_optimizer_history(comparison.runs, "training_loss", "Training loss by epoch"))
     _show_figure(plot_optimizer_history(comparison.runs, "validation_loss", "Validation loss by epoch"))
 
-    st.markdown("### 6 · Training summary")
+    st.markdown('<div class="optimizer-section-heading"><span>06 · SUMMARY</span><h2>Compare final metrics</h2></div>', unsafe_allow_html=True)
     st.table(_summary_rows(comparison))
     _show_figure(plot_optimizer_final_accuracy(comparison.runs))
 
-    st.markdown("### 7 · Decision boundary comparison")
+    st.markdown('<div class="optimizer-section-heading"><span>07 · MODEL BEHAVIOR</span><h2>Inspect a learned decision boundary</h2></div>', unsafe_allow_html=True)
     boundary_optimizer = st.selectbox("Optimizer model", tuple(comparison.runs), key="optimizer_boundary")
     result = comparison.runs[boundary_optimizer]
     boundary = plot_decision_boundary(
-        result.network, comparison.features, comparison.labels, scaler=comparison.split.scaler
+        result.network, comparison.features, comparison.labels, scaler=comparison.split.scaler,
+        plot_theme="light",
     )
-    boundary.axes[0].set_title(f"{boundary_optimizer} · learned decision boundary", loc="left", color="#edf3ff", fontsize=12, pad=12)
+    boundary.axes[0].set_title(f"{boundary_optimizer} · learned decision boundary", loc="left", color="#17263F", fontsize=12, pad=12)
     _show_figure(boundary)
     save_candidates = {}
     for name, result in comparison.runs.items():
