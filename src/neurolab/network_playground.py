@@ -151,7 +151,7 @@ def render_network_playground() -> None:
     )
     st.caption("Binary classification uses a 0.5 probability threshold. Current output activation: sigmoid.")
 
-    train_clicked = st.button("Train Network", type="primary", use_container_width=True, key="play_train_button")
+    train_clicked = st.button("Train Network", type="primary", width="stretch", key="play_train_button")
     if train_clicked:
         try:
             # Dataset and scaler are prepared only after an explicit training action.

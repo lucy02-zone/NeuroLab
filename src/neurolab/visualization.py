@@ -8,16 +8,17 @@ from matplotlib.patches import Circle
 from src.neurolab.models import NeuralNetwork
 
 
-NAVY = "#ffffff"
-BLUE = "#35102f"
-CYAN = "#65405f"
-VIOLET = "#a88fa6"
-TEXT = "#35102f"
-MUTED = "#716675"
-GRID = "#c2c8d2"
+NAVY = "#0b1020"
+BLUE = "#5b8cff"
+CYAN = "#4bd4e8"
+VIOLET = "#a78bfa"
+TEXT = "#edf3ff"
+MUTED = "#a6b4cb"
+GRID = "#2a3955"
 
 
-def _style_axis(axis: plt.Axes, title: str) -> None:
+def style_axis(axis: plt.Axes, title: str) -> None:
+    """Apply shared dark plotting colors and typography to a Matplotlib axis."""
     axis.set_facecolor(NAVY)
     axis.set_title(title, loc="left", color=TEXT, fontsize=12, pad=12)
     axis.tick_params(colors=MUTED, labelsize=9)
@@ -32,7 +33,7 @@ def plot_dataset_preview(features: np.ndarray, labels: np.ndarray, title: str = 
     """Create a scatter plot for a two-dimensional labeled dataset."""
     X, y = _validate_plot_data(features, labels)
     figure, axis = plt.subplots(figsize=(7.0, 5.0), facecolor=NAVY)
-    _style_axis(axis, title)
+    style_axis(axis, title)
     for class_index, color, label in ((0, BLUE, "Class 0"), (1, CYAN, "Class 1")):
         mask = y == class_index
         if np.any(mask):
@@ -40,7 +41,7 @@ def plot_dataset_preview(features: np.ndarray, labels: np.ndarray, title: str = 
                          edgecolors="#ffffff", linewidths=0.35, alpha=0.88)
     axis.set_xlabel("Feature 1")
     axis.set_ylabel("Feature 2")
-    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 
@@ -66,7 +67,7 @@ def plot_network_architecture(
     for layer_index in range(len(positions) - 1):
         for x1, y1 in positions[layer_index]:
             for x2, y2 in positions[layer_index + 1]:
-                axis.plot([x1, x2], [y1, y2], color="#9a8998", alpha=0.3, linewidth=0.75, zorder=1)
+                axis.plot([x1, x2], [y1, y2], color="#8596b5", alpha=0.34, linewidth=0.75, zorder=1)
 
     for layer_index, layer_positions in enumerate(positions):
         color = BLUE if layer_index == 0 else CYAN if layer_index == len(positions) - 1 else VIOLET
@@ -95,7 +96,7 @@ def plot_loss_history(history: dict[str, list[int | float]]) -> plt.Figure:
     if epochs.size == 0 or len(history.get("training_loss", [])) != epochs.size:
         raise ValueError("history must contain matching non-empty epoch and training_loss values.")
     figure, axis = plt.subplots(figsize=(8.0, 4.3), facecolor=NAVY)
-    _style_axis(axis, "Loss by epoch")
+    style_axis(axis, "Loss by epoch")
     axis.plot(epochs, history["training_loss"], color=BLUE, linewidth=2.3, label="Training loss")
     validation = history.get("validation_loss")
     if validation is not None:
@@ -104,7 +105,7 @@ def plot_loss_history(history: dict[str, list[int | float]]) -> plt.Figure:
         axis.plot(epochs, validation, color=CYAN, linewidth=2.1, label="Validation loss")
     axis.set_xlabel("Epoch")
     axis.set_ylabel("Loss")
-    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 
@@ -114,7 +115,7 @@ def plot_optimizer_history(runs: dict[str, object], metric: str, title: str) -> 
     if not runs:
         raise ValueError("At least one optimizer result is required.")
     figure, axis = plt.subplots(figsize=(8.0, 4.3), facecolor=NAVY)
-    _style_axis(axis, title)
+    style_axis(axis, title)
     colors = {"SGD": BLUE, "Momentum": CYAN, "Adam": VIOLET}
     for name, result in runs.items():
         history = result.history
@@ -125,7 +126,7 @@ def plot_optimizer_history(runs: dict[str, object], metric: str, title: str) -> 
         axis.plot(epochs, values, linewidth=2.2, color=colors.get(name, BLUE), label=name)
     axis.set_xlabel("Epoch")
     axis.set_ylabel("Accuracy" if "accuracy" in metric else "Loss")
-    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 
@@ -140,13 +141,13 @@ def plot_optimizer_final_accuracy(runs: dict[str, object]) -> plt.Figure:
     training = [runs[name].history["training_accuracy"][-1] for name in names]
     validation = [runs[name].history["validation_accuracy"][-1] for name in names]
     figure, axis = plt.subplots(figsize=(8.0, 4.0), facecolor=NAVY)
-    _style_axis(axis, "Final classification accuracy")
+    style_axis(axis, "Final classification accuracy")
     axis.bar(positions - width / 2, training, width, color=BLUE, label="Training")
     axis.bar(positions + width / 2, validation, width, color=CYAN, label="Validation")
     axis.set_xticks(positions, names, color=MUTED)
     axis.set_ylim(0.0, 1.0)
     axis.set_ylabel("Accuracy")
-    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 
@@ -179,8 +180,8 @@ def plot_decision_boundary(
     figure, axis = plt.subplots(figsize=(7.0, 5.0), facecolor=NAVY)
     axis.set_facecolor(NAVY)
     axis.contourf(grid_x, grid_y, regions, levels=(-0.5, 0.5, 1.5),
-                  cmap=ListedColormap(("#35102f28", "#8b6c8833")), alpha=0.72)
-    _style_axis(axis, "Trained model decision boundary")
+                  cmap=ListedColormap(("#5b8cff35", "#a78bfa45")), alpha=0.72)
+    style_axis(axis, "Trained model decision boundary")
     for class_index, color, label in ((0, BLUE, "Class 0"), (1, CYAN, "Class 1")):
         mask = y == class_index
         if np.any(mask):
@@ -188,7 +189,7 @@ def plot_decision_boundary(
                          edgecolors="#ffffff", linewidths=0.4, alpha=0.93)
     axis.set_xlabel("Feature 1")
     axis.set_ylabel("Feature 2")
-    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 

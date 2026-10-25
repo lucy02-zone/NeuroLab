@@ -118,9 +118,9 @@ def plot_network_diagram(
             if is_highlighted:
                 face, text = BLUE, "#ffffff"
             elif layer_index == 0:
-                face, text = "#eee8ef", TEXT
+                face, text = "#5b8cff", "#ffffff"
             else:
-                face, text = "#f4f5f8", TEXT
+                face, text = "#a78bfa", "#0b1020"
             axis.add_patch(Circle(
                 (x_pos, y_pos), 0.037, facecolor=face,
                 edgecolor=BLUE if is_highlighted else CYAN if layer_index == len(widths) - 1 else VIOLET,
@@ -321,7 +321,7 @@ def render_network_visualizer() -> None:
                         key=f"visualizer_input_{index}",
                     ))
             sample = np.asarray(values, dtype=float)
-        if st.button("Run Forward Propagation", type="primary", use_container_width=True, key="visualizer_forward"):
+        if st.button("Run Forward Propagation", type="primary", width="stretch", key="visualizer_forward"):
             try:
                 trace = inspect_forward_pass(network, sample)
                 st.session_state[TRACE_KEY] = {"network": network, "trace": trace, "input": sample.copy()}

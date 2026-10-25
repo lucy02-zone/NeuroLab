@@ -106,7 +106,7 @@ def render_optimizer_lab() -> None:
             st.caption("Tracks bias-corrected first and second gradient moments.")
 
     st.markdown("### 4 · Comparison controls")
-    run_clicked = st.button("Run Comparison", type="primary", use_container_width=True, key="optimizer_run")
+    run_clicked = st.button("Run Comparison", type="primary", width="stretch", key="optimizer_run")
     if run_clicked:
         if not selected:
             st.warning("Select at least one optimizer to run a comparison.")
@@ -176,7 +176,7 @@ def render_optimizer_lab() -> None:
     boundary = plot_decision_boundary(
         result.network, comparison.features, comparison.labels, scaler=comparison.split.scaler
     )
-    boundary.axes[0].set_title(f"{boundary_optimizer} · learned decision boundary", loc="left", color="#35102f", fontsize=12, pad=12)
+    boundary.axes[0].set_title(f"{boundary_optimizer} · learned decision boundary", loc="left", color="#edf3ff", fontsize=12, pad=12)
     _show_figure(boundary)
     save_candidates = {}
     for name, result in comparison.runs.items():

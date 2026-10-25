@@ -5,6 +5,7 @@ import numpy as np
 import streamlit as st
 
 from src.neurolab.models import losses
+from .visualization import BLUE, CYAN, GRID, NAVY, TEXT, VIOLET, style_axis
 
 
 LOSS_NAMES = ("Mean Squared Error (MSE)", "Mean Absolute Error (MAE)", "Binary Cross-Entropy", "Categorical Cross-Entropy")
@@ -16,27 +17,17 @@ LOSS_INFO = {
 }
 
 
-def _style_axis(axis: plt.Axes, title: str) -> None:
-    axis.set_title(title, loc="left", color="#35102f", fontsize=12, pad=12)
-    axis.set_facecolor("#ffffff")
-    axis.tick_params(colors="#716675", labelsize=9)
-    axis.xaxis.label.set_color("#716675")
-    axis.yaxis.label.set_color("#716675")
-    for spine in axis.spines.values():
-        spine.set_color("#c2c8d2")
-    axis.grid(color="#c2c8d2", linewidth=0.7, alpha=0.65)
-
-
 def _plot(values: np.ndarray, curves: dict[str, np.ndarray], title: str, target: float | None = None) -> None:
-    figure, axis = plt.subplots(figsize=(9.5, 4.2), facecolor="#ffffff")
-    _style_axis(axis, title)
-    for label, curve in curves.items():
-        axis.plot(values, curve, linewidth=2.4, label=label)
+    figure, axis = plt.subplots(figsize=(9.5, 4.2), facecolor=NAVY)
+    style_axis(axis, title)
+    curve_colors = (BLUE, CYAN, VIOLET, "#62d6a6")
+    for (label, curve), color in zip(curves.items(), curve_colors):
+        axis.plot(values, curve, linewidth=2.4, color=color, label=label)
     if target is not None:
-        axis.axvline(target, color="#65405f", linestyle="--", linewidth=1.2, label="Target")
+        axis.axvline(target, color=VIOLET, linestyle="--", linewidth=1.2, label="Target")
     axis.set_xlabel("Prediction" if target is not None else "Predicted probability")
     axis.set_ylabel("Loss")
-    axis.legend(facecolor="#f4f5f8", edgecolor="#c2c8d2", labelcolor="#35102f")
+    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     st.pyplot(figure, width="stretch")
     plt.close(figure)

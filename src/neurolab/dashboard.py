@@ -32,7 +32,7 @@ def render_dashboard() -> None:
     )
 
     st.markdown('<div class="section-heading"><div><div class="eyebrow">THE LEARNING TOOLKIT</div>'
-                '<h2>Explore the building blocks</h2></div><span class="section-note">Planned capabilities</span></div>',
+                '<h2>Explore the building blocks</h2></div><span class="section-note">Interactive modules</span></div>',
                 unsafe_allow_html=True)
     columns = st.columns(3, gap="medium")
     for index, (number, title, description, icon, accent) in enumerate(FEATURES):
@@ -47,11 +47,11 @@ def render_dashboard() -> None:
     left, right = st.columns([1.15, 0.85], gap="medium")
     with left:
         st.markdown(
-            '<section class="info-panel"><div class="eyebrow">PROJECT STATUS</div><h2>Building the foundation</h2>'
-            '<p>NeuroLab is being developed as a clear, interactive companion for Principles of Deep Neural Networks. '
-            'The first step is a solid application shell; learning tools will arrive incrementally.</p>'
-            '<div class="progress-track"><div class="progress-fill"></div></div>'
-            '<div class="progress-caption"><span>Foundation</span><span>In development</span></div></section>',
+            '<section class="info-panel"><div class="eyebrow">PROJECT STATUS</div><h2>Learning workspace ready</h2>'
+            '<p>Explore the NumPy network engine, interactive math pages, synthetic datasets, model training, '
+            'evaluation, experiment reports, model files, and knowledge challenges. Training runs only when you start one.</p>'
+            '<div class="progress-caption"><span><span class="status-dot"></span>Core modules available</span>'
+            '<span>Progress stays in your session where applicable</span></div></section>',
             unsafe_allow_html=True,
         )
     with right:

@@ -48,7 +48,7 @@ with st.sidebar:
             f"{icon}   {section}",
             key=f"nav_{section.lower().replace(' ', '_').replace('&', 'and')}",
             type="primary" if section == st.session_state.navigation_selection else "secondary",
-            use_container_width=True,
+            width="stretch",
             on_click=_select_navigation,
             args=(section,),
         )

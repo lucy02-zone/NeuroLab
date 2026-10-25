@@ -10,6 +10,19 @@ from src.neurolab.experiment_store import (
     markdown_report,
     summary_csv,
 )
+from src.neurolab.experiment_ui import experiment_fingerprint
+
+
+def test_experiment_fingerprint_is_stable_and_changes_with_run_data():
+    candidate = {
+        "dataset": "xor",
+        "dataset_configuration": {"seed": 4},
+        "configuration": {"hidden": (4, 3)},
+        "history": {"epoch": [1], "training_loss": [0.5]},
+    }
+    assert experiment_fingerprint(candidate) == experiment_fingerprint(candidate.copy())
+    changed = {**candidate, "history": {"epoch": [1], "training_loss": [0.4]}}
+    assert experiment_fingerprint(candidate) != experiment_fingerprint(changed)
 
 
 def _save(store, *, name="Trial", dataset="moons", validation_fraction=0.25, history=None, learning_rate=0.02):
@@ -41,6 +54,15 @@ def test_save_retrieve_and_survive_a_new_store_instance(tmp_path):
     assert retrieved["metrics"]["final_validation_accuracy"] == 0.7
     assert retrieved["task_type"] == "classification"
     assert retrieved["history"]["epoch"] == [1, 2]
+
+
+def test_saving_an_identical_record_twice_returns_the_existing_record(tmp_path):
+    store = ExperimentStore(tmp_path / "idempotent.sqlite3")
+    first = _save(store, name="Same run")
+    second = _save(store, name="Same run")
+
+    assert second == first
+    assert len(store.list()) == 1
 
 
 def test_filter_sort_and_missing_metrics_are_preserved(tmp_path):

@@ -244,14 +244,14 @@ def render_quiz_center() -> None:
         difficulty_rows = [{"Difficulty": name, "Attempted": values["attempted"], "Correct": values["correct"]}
                            for name, values in progress["by_difficulty"].items() if values["attempted"]]
         if category_rows:
-            st.dataframe(category_rows, hide_index=True, use_container_width=True)
-            st.dataframe(difficulty_rows, hide_index=True, use_container_width=True)
+            st.dataframe(category_rows, hide_index=True, width="stretch")
+            st.dataframe(difficulty_rows, hide_index=True, width="stretch")
         else:
             st.caption("Topic and difficulty breakdowns appear after your first submitted answer.")
         completions = st.session_state.get("quiz_completion_history", [])
         if completions:
             st.markdown("**Completed challenges this session**")
-            st.dataframe(completions, hide_index=True, use_container_width=True)
+            st.dataframe(completions, hide_index=True, width="stretch")
 
     mode = st.selectbox("Challenge mode", MODES, key="quiz_center_mode")
     if mode == "Review Mistakes":

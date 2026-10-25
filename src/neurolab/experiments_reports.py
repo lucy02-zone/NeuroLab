@@ -11,7 +11,7 @@ from .experiment_store import (
     markdown_report,
     summary_csv,
 )
-from .visualization import BLUE, CYAN, GRID, MUTED, NAVY, TEXT, VIOLET
+from .visualization import BLUE, CYAN, GRID, NAVY, TEXT, VIOLET, style_axis
 
 
 PENDING_DELETE_KEY = "experiment_pending_delete_id"
@@ -19,20 +19,15 @@ PENDING_DELETE_KEY = "experiment_pending_delete_id"
 
 def _history_figure(records: list[dict[str, object]], metric: str, title: str) -> plt.Figure:
     figure, axis = plt.subplots(figsize=(8.0, 4.2), facecolor=NAVY)
-    axis.set_facecolor(NAVY)
     colors = (BLUE, CYAN, VIOLET)
     for index, record in enumerate(records):
         history = record["history"]
         axis.plot(history["epoch"], history[metric], linewidth=2.1,
                   color=colors[index % len(colors)], label=f"#{record['id']} {record['name']}")
-    axis.set_title(title, loc="left", color=TEXT, fontsize=12, pad=12)
-    axis.set_xlabel("Epoch", color=MUTED)
-    axis.set_ylabel("Loss", color=MUTED)
-    axis.tick_params(colors=MUTED)
-    for spine in axis.spines.values():
-        spine.set_color(GRID)
-    axis.grid(color=GRID, linewidth=0.65, alpha=0.55)
-    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
+    style_axis(axis, title)
+    axis.set_xlabel("Epoch")
+    axis.set_ylabel("Loss")
+    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 

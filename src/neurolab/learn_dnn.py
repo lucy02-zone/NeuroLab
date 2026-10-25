@@ -6,7 +6,7 @@ import streamlit as st
 
 from .experiment_store import ExperimentStore, default_database_path
 from .models import Adam, NeuralNetwork, SGD, SGDMomentum, activations, losses
-from .visualization import BLUE, CYAN, GRID, MUTED, NAVY, TEXT, VIOLET
+from .visualization import BLUE, CYAN, GRID, NAVY, TEXT, VIOLET, style_axis
 
 
 MODULES = (
@@ -74,14 +74,7 @@ def classification_metrics(y_true: np.ndarray, y_predicted: np.ndarray) -> dict[
 
 
 def _style_axis(axis: plt.Axes, title: str) -> None:
-    axis.set_facecolor(NAVY)
-    axis.set_title(title, loc="left", color=TEXT, fontsize=12, pad=12)
-    axis.tick_params(colors=MUTED, labelsize=9)
-    axis.xaxis.label.set_color(MUTED)
-    axis.yaxis.label.set_color(MUTED)
-    for spine in axis.spines.values():
-        spine.set_color(GRID)
-    axis.grid(color=GRID, linewidth=0.65, alpha=0.55)
+    style_axis(axis, title)
     axis.axhline(0, color=GRID, linewidth=0.8)
 
 
@@ -211,7 +204,7 @@ def _render_module_3() -> None:
         axes[0].plot(x_values, function(x_values), label=label, linewidth=2)
         axes[1].plot(x_values, derivative(x_values), label=label, linewidth=2)
     for axis in axes:
-        axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
+        axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
         axis.set_xlabel("Input x")
     axes[0].set_ylabel("f(x)")
     axes[1].set_ylabel("f′(x)")
@@ -394,7 +387,7 @@ def _render_module_7() -> None:
         if "validation_loss" in history:
             axis.plot(history["epoch"], history["validation_loss"], color=CYAN, label="Validation loss", linewidth=2.1)
         axis.set_xlabel("Epoch"); axis.set_ylabel("Loss")
-        axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
+        axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
         figure.tight_layout(); st.pyplot(figure, width="stretch"); plt.close(figure)
     else:
         st.info("No saved experiment history is available yet, so no training curves are shown.")

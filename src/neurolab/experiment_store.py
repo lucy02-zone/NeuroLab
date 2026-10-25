@@ -108,7 +108,22 @@ class ExperimentStore:
             "final_validation_accuracy": _final(history, "validation_accuracy"),
         }
         timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        clean_notes = notes.strip() if isinstance(notes, str) else ""
+        serialized_dataset = _json(dataset_configuration)
+        serialized_configuration = _json(configuration)
+        serialized_metrics = _json(metrics)
+        serialized_history = _json(history)
         with self._connection() as connection:
+            existing = connection.execute(
+                """SELECT id FROM experiments
+                   WHERE name = ? AND dataset = ? AND dataset_configuration = ? AND configuration = ?
+                     AND task_type = ? AND metrics = ? AND history = ? AND notes = ?
+                   ORDER BY id LIMIT 1""",
+                (clean_name, clean_dataset, serialized_dataset, serialized_configuration,
+                 task_type, serialized_metrics, serialized_history, clean_notes),
+            ).fetchone()
+            if existing is not None:
+                return int(existing["id"])
             cursor = connection.execute(
                 """INSERT INTO experiments
                    (name, created_at, dataset, dataset_configuration, configuration, task_type, metrics, history, notes)
@@ -117,12 +132,12 @@ class ExperimentStore:
                     clean_name,
                     timestamp,
                     clean_dataset,
-                    _json(dataset_configuration),
-                    _json(configuration),
+                    serialized_dataset,
+                    serialized_configuration,
                     task_type,
-                    _json(metrics),
-                    _json(history),
-                    notes.strip() if isinstance(notes, str) else "",
+                    serialized_metrics,
+                    serialized_history,
+                    clean_notes,
                 ),
             )
             return int(cursor.lastrowid)

@@ -48,7 +48,7 @@ def plot_backpropagation_network(network: NeuralNetwork, inputs: np.ndarray) -> 
         color = BLUE if layer_index == 0 else CYAN if layer_index == len(widths) - 1 else VIOLET
         for neuron_index, (x_pos, y_pos) in enumerate(layer_positions):
             axis.scatter([x_pos], [y_pos], s=620, color=color, edgecolors=TEXT, linewidths=0.9, zorder=3)
-            axis.text(x_pos, y_pos, f"{values[neuron_index]:.3f}", color=("#35102f" if color == VIOLET else "#ffffff"), fontsize=8,
+            axis.text(x_pos, y_pos, f"{values[neuron_index]:.3f}", color=("#0b1020" if color == VIOLET else "#edf3ff"), fontsize=8,
                       weight="bold", ha="center", va="center", zorder=4)
             axis.text(x_pos, y_pos - 0.095, f"{['Input', 'Hidden', 'Output'][0 if layer_index == 0 else 2 if layer_index == len(widths)-1 else 1]} {neuron_index + 1}",
                       color=TEXT, fontsize=7, ha="center", va="top")
@@ -146,7 +146,7 @@ def _render_gradient_details(gradients: dict[str, object]) -> None:
     for spine in axis.spines.values():
         spine.set_color(GRID)
     axis.grid(axis="y", color=GRID, alpha=0.55)
-    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     st.pyplot(figure, width="stretch")
     plt.close(figure)

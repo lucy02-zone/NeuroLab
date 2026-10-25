@@ -66,11 +66,11 @@ def _plot_scatter(features: np.ndarray, labels: np.ndarray, title: str, validati
             features[mask, 0], features[mask, 1], c=color,
             marker="x" if validation else marker, s=32 if validation else 25,
             label=f"Class {class_index}", alpha=0.88,
-            edgecolors="none" if validation else "#ffffff", linewidths=0.5,
+            edgecolors="none" if validation else "#edf3ff", linewidths=0.5,
         )
     axis.set_xlabel("Feature 1")
     axis.set_ylabel("Feature 2")
-    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
     figure.tight_layout()
     return figure
 
@@ -91,7 +91,7 @@ def _plot_split(split, standardize: bool) -> plt.Figure:
                              label=f"{split_name} · class {class_index}", s=28, alpha=0.82)
     axis.set_xlabel(f"{feature_label} 1")
     axis.set_ylabel(f"{feature_label} 2")
-    axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT, fontsize=8)
+    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT, fontsize=8)
     figure.tight_layout()
     return figure
 
@@ -108,7 +108,7 @@ def _plot_feature_analysis(features: np.ndarray, labels: np.ndarray) -> tuple[pl
                 axis.hist(values, bins=24, alpha=0.55, color=color, label=f"Class {class_index}")
         axis.set_xlabel(f"Feature {index + 1}")
         axis.set_ylabel("Samples")
-        axis.legend(facecolor="#f4f5f8", edgecolor=GRID, labelcolor=TEXT, fontsize=8)
+        axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT, fontsize=8)
     distributions.tight_layout()
 
     correlation, axis = plt.subplots(figsize=(4.0, 3.5), facecolor=NAVY)
@@ -200,7 +200,7 @@ def render_dataset_explorer() -> None:
             "Minimum": f"{stats['minimum'][index]:.4f}",
             "Maximum": f"{stats['maximum'][index]:.4f}",
         })
-    st.dataframe(feature_rows, hide_index=True, use_container_width=True)
+    st.dataframe(feature_rows, hide_index=True, width="stretch")
 
     st.markdown("### 3 · Noise and point inspection")
     noise_col, point_col = st.columns([1.3, 0.7], gap="large")
@@ -250,7 +250,7 @@ def render_dataset_explorer() -> None:
                 {"Class": f"Class {label}", "Training": train_counts.get(label, 0),
                  "Validation": validation_counts.get(label, 0)}
                 for label in sorted(set(train_counts) | set(validation_counts))
-            ], hide_index=True, use_container_width=True)
+            ], hide_index=True, width="stretch")
             if standardize and split.scaler is not None:
                 st.caption("StandardScaler was fitted on training samples only.")
         st.caption("Validation data is held out to evaluate generalization; it is not used to update model weights.")

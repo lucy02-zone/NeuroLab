@@ -5,6 +5,7 @@ import numpy as np
 import streamlit as st
 
 from src.neurolab.models import activations
+from .visualization import BLUE, CYAN, GRID, NAVY, TEXT, VIOLET, style_axis
 
 
 INFO = {
@@ -27,19 +28,6 @@ DERIVATIVES = {
     "ReLU": activations.relu_derivative,
     "Leaky ReLU": activations.leaky_relu_derivative,
 }
-
-
-def _style_axis(axis: plt.Axes, title: str) -> None:
-    axis.set_title(title, loc="left", color="#35102f", fontsize=12, pad=12)
-    axis.set_facecolor("#ffffff")
-    axis.tick_params(colors="#716675", labelsize=9)
-    axis.xaxis.label.set_color("#716675")
-    axis.yaxis.label.set_color("#716675")
-    for spine in axis.spines.values():
-        spine.set_color("#c2c8d2")
-    axis.grid(color="#c2c8d2", linewidth=0.7, alpha=0.65)
-    axis.axhline(0, color="#9a8998", linewidth=0.8)
-    axis.axvline(0, color="#9a8998", linewidth=0.8)
 
 
 def render_activation_playground() -> None:
@@ -88,15 +76,17 @@ def render_activation_playground() -> None:
 
     plot_col, derivative_col = st.columns(2, gap="medium")
     with plot_col:
-        figure, axis = plt.subplots(figsize=(7.0, 4.0), facecolor="#ffffff")
-        _style_axis(axis, selected_label)
-        color = "#65405f" if selected in ("Softmax", "Leaky ReLU") else "#35102f"
+        figure, axis = plt.subplots(figsize=(7.0, 4.0), facecolor=NAVY)
+        style_axis(axis, selected_label)
+        axis.axhline(0, color=GRID, linewidth=0.8)
+        axis.axvline(0, color=GRID, linewidth=0.8)
+        color = CYAN if selected in ("Softmax", "Leaky ReLU") else BLUE
         axis.plot(x_values, curve_y, color=color, linewidth=2.6)
-        axis.scatter([point], [point_output[0] if selected == "Softmax" else point_output], color="#a88fa6", s=42, zorder=4)
+        axis.scatter([point], [point_output[0] if selected == "Softmax" else point_output], color=VIOLET, edgecolors="#edf3ff", s=48, zorder=4)
         axis.set_xlabel("Input x")
         axis.set_ylabel("Output")
         figure.tight_layout()
-        st.pyplot(figure, use_container_width=True)
+        st.pyplot(figure, width="stretch")
         plt.close(figure)
     with derivative_col:
         if selected_derivative is None:
@@ -108,14 +98,16 @@ def render_activation_playground() -> None:
                 unsafe_allow_html=True,
             )
         else:
-            figure, axis = plt.subplots(figsize=(7.0, 4.0), facecolor="#ffffff")
-            _style_axis(axis, f"Derivative of {selected}")
-            axis.plot(x_values, selected_derivative, color="#a88fa6", linewidth=2.6)
-            axis.scatter([point], [derivative_output], color="#65405f", s=42, zorder=4)
+            figure, axis = plt.subplots(figsize=(7.0, 4.0), facecolor=NAVY)
+            style_axis(axis, f"Derivative of {selected}")
+            axis.axhline(0, color=GRID, linewidth=0.8)
+            axis.axvline(0, color=GRID, linewidth=0.8)
+            axis.plot(x_values, selected_derivative, color=VIOLET, linewidth=2.6)
+            axis.scatter([point], [derivative_output], color=CYAN, edgecolors="#edf3ff", s=48, zorder=4)
             axis.set_xlabel("Input x")
             axis.set_ylabel("Derivative")
             figure.tight_layout()
-            st.pyplot(figure, use_container_width=True)
+            st.pyplot(figure, width="stretch")
             plt.close(figure)
 
     result_col, explanation_col = st.columns([0.8, 1.2], gap="medium")
@@ -129,21 +121,23 @@ def render_activation_playground() -> None:
     with explanation_col:
         st.markdown(
             f'<section class="info-panel"><div class="eyebrow">FUNCTION GUIDE</div><h2>{selected}</h2>'
-            f'<p><b style="color:#35102f">Output range:</b> {output_range}</p>'
+            f'<p><b style="color:#4bd4e8">Output range:</b> {output_range}</p>'
             f'<p>{use_case}</p></section>',
             unsafe_allow_html=True,
         )
 
     with st.expander("Compare activation curves"):
-        figure, axis = plt.subplots(figsize=(11.0, 4.8), facecolor="#ffffff")
-        _style_axis(axis, "Elementwise activation comparison")
-        for name, function in CURVES.items():
+        figure, axis = plt.subplots(figsize=(11.0, 4.8), facecolor=NAVY)
+        style_axis(axis, "Elementwise activation comparison")
+        axis.axhline(0, color=GRID, linewidth=0.8)
+        curve_colors = (BLUE, CYAN, VIOLET, "#62d6a6")
+        for (name, function), color in zip(CURVES.items(), curve_colors):
             values = function(x_values, alpha=alpha) if name == "Leaky ReLU" else function(x_values)
-            axis.plot(x_values, values, linewidth=2.1, label=name)
+            axis.plot(x_values, values, linewidth=2.1, color=color, label=name)
         axis.set_xlabel("Input x")
         axis.set_ylabel("Output")
-        axis.legend(facecolor="#f4f5f8", edgecolor="#c2c8d2", labelcolor="#35102f", ncol=4)
+        axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT, ncol=4)
         figure.tight_layout()
-        st.pyplot(figure, use_container_width=True)
+        st.pyplot(figure, width="stretch")
         plt.close(figure)
         st.caption("Softmax is excluded from this scalar comparison because it transforms a vector of logits together.")
