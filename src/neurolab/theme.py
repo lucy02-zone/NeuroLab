@@ -687,6 +687,33 @@ def apply_theme() -> None:
             fill: #f3f6fa !important;
         }
 
+        /* Dashboard launch buttons keep one readable color in every click state. */
+        [class*="st-key-dashboard_open_"] .stButton > button,
+        [class*="st-key-dashboard_open_"] .stButton > button:hover,
+        [class*="st-key-dashboard_open_"] .stButton > button:focus,
+        [class*="st-key-dashboard_open_"] .stButton > button:focus-visible,
+        [class*="st-key-dashboard_open_"] .stButton > button:active {
+            background: linear-gradient(135deg, #17263f 0%, #354d78 100%) !important;
+            border: 1px solid #17263f !important;
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            opacity: 1 !important;
+            transform: none !important;
+            filter: none !important;
+            box-shadow: none !important;
+            transition: transform 0.16s ease !important;
+        }
+        [class*="st-key-dashboard_open_"] .stButton > button:hover { transform: translateY(-1px) !important; }
+        [class*="st-key-dashboard_open_"] .stButton > button *,
+        [class*="st-key-dashboard_open_"] .stButton > button:hover *,
+        [class*="st-key-dashboard_open_"] .stButton > button:focus *,
+        [class*="st-key-dashboard_open_"] .stButton > button:focus-visible *,
+        [class*="st-key-dashboard_open_"] .stButton > button:active * {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            opacity: 1 !important;
+        }
+
         /* Network Playground: make each step and its controls visibly defined. */
         [class*="st-key-network_playground_page"] [data-testid="stExpander"] {
             border: 2px solid #b5c7d9 !important;
