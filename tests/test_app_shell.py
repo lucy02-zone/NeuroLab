@@ -12,6 +12,7 @@ def test_navigation_contains_requested_sections():
         "Experiment Wizard",
         "Model Manager",
         "Math Calculator",
+        "Quiz & Challenge Center",
         "Network Visualizer",
         "Activation Functions",
         "Loss Functions",

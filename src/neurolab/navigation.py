@@ -10,6 +10,7 @@ NAVIGATION = (
     "Experiment Wizard",
     "Model Manager",
     "Math Calculator",
+    "Quiz & Challenge Center",
     "Network Visualizer",
     "Activation Functions",
     "Loss Functions",
