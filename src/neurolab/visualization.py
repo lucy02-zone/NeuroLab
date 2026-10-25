@@ -39,7 +39,7 @@ def plot_dataset_preview(features: np.ndarray, labels: np.ndarray, title: str = 
     """Create a scatter plot for a two-dimensional labeled dataset."""
     X, y = _validate_plot_data(features, labels)
     light = plot_theme == "light"
-    figure_background = "#F5EFEB" if light else NAVY
+    figure_background = "#F3F6FA" if light else NAVY
     figure, axis = plt.subplots(figsize=(7.0, 5.0), facecolor=figure_background)
     style_axis(axis, title, plot_theme)
     class_colors = ("#2F4156", "#567C8D") if light else (BLUE, CYAN)
@@ -70,7 +70,7 @@ def plot_network_architecture(
     light = plot_theme == "light"
     figure, axis = plt.subplots(
         figsize=(max(6.0, len(layer_sizes) * 1.7), figure_height),
-        facecolor="#F5EFEB" if light else NAVY,
+        facecolor="#F3F6FA" if light else NAVY,
     )
     axis.set_facecolor("#FFFFFF" if light else NAVY)
     positions: list[list[tuple[float, float]]] = []
@@ -92,7 +92,7 @@ def plot_network_architecture(
         for neuron_index, (x_coord, y_coord) in enumerate(layer_positions):
             radius = min(0.032, 0.3 / max(1, largest_layer - 1))
             axis.add_patch(Circle((x_coord, y_coord), radius, facecolor=color,
-                                  edgecolor="#FFFFFF" if not light else "#F5EFEB", linewidth=0.8, zorder=3))
+                                  edgecolor="#FFFFFF" if not light else "#F3F6FA", linewidth=0.8, zorder=3))
             if layer_index == 0:
                 axis.text(x_coord, y_coord, f"x{neuron_index + 1}", color="#FFFFFF", fontsize=7,
                           ha="center", va="center", zorder=4)
@@ -115,7 +115,7 @@ def plot_loss_history(history: dict[str, list[int | float]], plot_theme: str = "
     if epochs.size == 0 or len(history.get("training_loss", [])) != epochs.size:
         raise ValueError("history must contain matching non-empty epoch and training_loss values.")
     light = plot_theme == "light"
-    figure, axis = plt.subplots(figsize=(8.0, 4.3), facecolor="#F5EFEB" if light else NAVY)
+    figure, axis = plt.subplots(figsize=(8.0, 4.3), facecolor="#F3F6FA" if light else NAVY)
     style_axis(axis, "Loss by epoch", plot_theme)
     axis.plot(epochs, history["training_loss"], color="#2F4156" if light else BLUE, linewidth=2.3, label="Training loss")
     validation = history.get("validation_loss")

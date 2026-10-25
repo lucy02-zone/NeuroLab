@@ -155,6 +155,21 @@ def apply_theme() -> None:
         [class*="st-key-play_back_architecture"] button, [class*="st-key-play_back_training"] button { min-height:3rem !important; border:1px solid var(--line) !important; border-radius:.78rem !important; background:#FFFFFF !important; color:var(--navy) !important; }
         [class*="st-key-play_back_architecture"] button *, [class*="st-key-play_back_training"] button * { color:var(--navy) !important; -webkit-text-fill-color:var(--navy) !important; }
         [class*="st-key-play_back_architecture"] button:hover, [class*="st-key-play_back_training"] button:hover { border-color:#AFC6D9 !important; background:#F5F9FC !important; }
+
+        /* Dataset Explorer follows the same guided layout and visual rhythm. */
+        [class*="st-key-dataset_explorer_page"] .playground-hero { min-height:245px; margin:.5rem 0 1.6rem; }
+        [class*="st-key-dataset_explorer_page"] [data-testid="stProgressBar"] { margin:.3rem 0 1.15rem; }
+        [class*="st-key-dataset_explorer_page"] [data-testid="stExpander"] { margin:0 0 .85rem; border-color:var(--line); border-radius:1rem; background:#FFFFFF; box-shadow:0 5px 17px #1B355008; }
+        [class*="st-key-dataset_explorer_page"] [data-testid="stExpander"] summary p { color:var(--navy) !important; font:700 .98rem 'Space Grotesk',sans-serif; }
+        [class*="st-key-dataset_explorer_page"] [data-testid="stExpander"] summary:hover p { color:var(--teal) !important; }
+        [class*="st-key-dataset_explorer_page"] [data-testid="stMetric"] { box-shadow:0 4px 14px #1B355008; }
+        [class*="st-key-dataset_explorer_page"] [data-testid="stCaptionContainer"] { color:var(--muted); }
+        [class*="st-key-explorer_next_setup"] button, [class*="st-key-explorer_next_analysis"] button, [class*="st-key-explorer_transfer"] button { min-height:3rem !important; border:1px solid #2F5F83 !important; border-radius:.78rem !important; background:linear-gradient(115deg,#17263F,#2F5F83) !important; color:#FFFFFF !important; font:700 .92rem 'DM Sans',sans-serif !important; box-shadow:0 6px 15px #17263F20 !important; transition:transform .16s ease,box-shadow .16s ease,filter .16s ease; }
+        [class*="st-key-explorer_next_setup"] button *, [class*="st-key-explorer_next_analysis"] button *, [class*="st-key-explorer_transfer"] button * { color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important; font:inherit !important; opacity:1 !important; }
+        [class*="st-key-explorer_next_setup"] button:hover, [class*="st-key-explorer_next_analysis"] button:hover, [class*="st-key-explorer_transfer"] button:hover { transform:translateY(-1px); filter:brightness(1.08); box-shadow:0 9px 20px #17263F28 !important; }
+        [class*="st-key-explorer_back_analysis"] button, [class*="st-key-explorer_back_split"] button { min-height:3rem !important; border:1px solid var(--line) !important; border-radius:.78rem !important; background:#FFFFFF !important; color:var(--navy) !important; }
+        [class*="st-key-explorer_back_analysis"] button *, [class*="st-key-explorer_back_split"] button * { color:var(--navy) !important; -webkit-text-fill-color:var(--navy) !important; }
+        [class*="st-key-explorer_back_analysis"] button:hover, [class*="st-key-explorer_back_split"] button:hover { border-color:#AFC6D9 !important; background:#F5F9FC !important; }
         @media (max-width: 800px) {
             .block-container { padding:1.1rem 1rem 2rem; }
             .hero { padding:1.6rem; min-height:290px; }
