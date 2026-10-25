@@ -867,6 +867,113 @@ def apply_theme() -> None:
             [class*="st-key-backprop_configuration_panel"],
             [class*="st-key-backprop_sample_panel"] { padding: 0.8rem 0.8rem 0.4rem; }
         }
+
+        /* Learn DNN: distinct course header, progress controls, and lesson surface. */
+        [class*="st-key-learn_dnn_page"] .learn-hero {
+            min-height: 245px;
+            margin: 0.5rem 0 1.2rem;
+        }
+        [class*="st-key-learn_dnn_controls_panel"],
+        [class*="st-key-learn_dnn_lesson_panel"] {
+            border: 2px solid #b5c7d9 !important;
+            border-radius: 1rem !important;
+            background: #ffffff !important;
+            box-shadow: 0 5px 16px rgba(23, 38, 63, 0.06) !important;
+        }
+        [class*="st-key-learn_dnn_controls_panel"] {
+            padding: 1rem 1.15rem 0.65rem;
+            margin-bottom: 1rem;
+        }
+        [class*="st-key-learn_dnn_lesson_panel"] {
+            padding: 1.25rem 1.4rem;
+        }
+        .learn-module-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding-bottom: 0.85rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #d8e2ec;
+        }
+        .learn-module-title span {
+            flex: 0 0 auto;
+            padding: 0.38rem 0.6rem;
+            border: 1px solid #c9d9e8;
+            border-radius: 2rem;
+            background: #eaf1f7;
+            color: #2f5f83;
+            font: 700 0.64rem 'DM Sans', sans-serif;
+            letter-spacing: 0.1em;
+        }
+        .learn-module-title h2 {
+            margin: 0;
+            color: #17263f !important;
+            font: 700 1.3rem 'Space Grotesk', sans-serif;
+        }
+        [class*="st-key-learn_dnn_page"] h4 {
+            margin: 1.2rem 0 0.55rem;
+            color: #17263f !important;
+            font: 700 1rem 'Space Grotesk', sans-serif;
+        }
+        [class*="st-key-learn_dnn_page"] [data-testid="stExpander"] {
+            margin: 0.55rem 0;
+            border: 1.5px solid #c1d0df !important;
+            border-radius: 0.8rem !important;
+            background: #ffffff !important;
+            box-shadow: 0 3px 10px rgba(23, 38, 63, 0.035);
+        }
+        [class*="st-key-learn_dnn_page"] [data-testid="stExpander"] summary p {
+            color: #17263f !important;
+            font-weight: 700 !important;
+        }
+        [class*="st-key-learn_dnn_page"] [data-testid="stExpander"] summary:hover p {
+            color: #397f8b !important;
+        }
+        [class*="st-key-learn_dnn_page"] [data-baseweb="input"] > div,
+        [class*="st-key-learn_dnn_page"] [data-baseweb="select"] > div {
+            background: #f7fafd !important;
+            border: 1.5px solid #a8bdcf !important;
+            border-radius: 0.68rem !important;
+        }
+        [class*="st-key-learn_dnn_page"] [data-baseweb="input"] > div:focus-within,
+        [class*="st-key-learn_dnn_page"] [data-baseweb="select"] > div:focus-within {
+            border: 2px solid #4e73d8 !important;
+            box-shadow: 0 0 0 3px rgba(78, 115, 216, 0.14) !important;
+        }
+        [class*="st-key-learn_dnn_page"] label,
+        [class*="st-key-learn_dnn_page"] [data-testid="stCaptionContainer"] {
+            color: #40566f !important;
+        }
+        [class*="st-key-learn_dnn_page"] [data-testid="stRadio"] div[role="radiogroup"] { gap: 0.4rem; }
+        [class*="st-key-learn_dnn_page"] [data-testid="stRadio"] div[role="radiogroup"] > label {
+            min-height: 2.75rem;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #c9d9e8;
+            border-radius: 0.72rem;
+            background: #f8fbfd;
+            color: #17263f !important;
+        }
+        [class*="st-key-learn_dnn_page"] [data-testid="stRadio"] div[role="radiogroup"] > label:has(input:checked) {
+            border-color: #4e73d8;
+            background: #edf3fc;
+        }
+        [class*="st-key-learn_dnn_page"] [data-testid="stMetric"] { min-height: 5rem; }
+        [class*="st-key-learn_dnn_page"] [data-testid="stTable"],
+        [class*="st-key-learn_dnn_page"] [data-testid="stDataFrame"] {
+            border: 1px solid #c9d9e8;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        [class*="st-key-learn_check_"] button,
+        [class*="st-key-learn_link_"] button,
+        [class*="st-key-learn_dnn_reset"] button {
+            min-height: 2.8rem !important;
+        }
+        @media (max-width: 820px) {
+            [class*="st-key-learn_dnn_lesson_panel"] { padding: 0.9rem; }
+            [class*="st-key-learn_dnn_controls_panel"] { padding: 0.8rem 0.8rem 0.45rem; }
+            .learn-module-title { align-items: flex-start; flex-direction: column; gap: 0.55rem; }
+        }
         </style>
         """,
         unsafe_allow_html=True,

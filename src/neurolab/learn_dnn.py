@@ -6,7 +6,7 @@ import streamlit as st
 
 from .experiment_store import ExperimentStore, default_database_path
 from .models import Adam, NeuralNetwork, SGD, SGDMomentum, activations, losses
-from .visualization import BLUE, CYAN, GRID, NAVY, TEXT, VIOLET, style_axis
+from .visualization import BLUE, CYAN, GRID, TEXT, VIOLET, style_axis
 
 
 MODULES = (
@@ -192,7 +192,7 @@ def _render_module_3() -> None:
     input_range = st.slider("Plot range", 1.0, 10.0, 5.0, 0.5, key="learn_m3_range")
     alpha = st.slider("Leaky ReLU α", 0.0, 0.3, 0.05, 0.01, key="learn_m3_alpha")
     x_values = np.linspace(-input_range, input_range, 300)
-    fig, axes = plt.subplots(1, 2, figsize=(11.0, 4.2), facecolor=NAVY)
+    fig, axes = plt.subplots(1, 2, figsize=(11.0, 4.2), facecolor="#F3F6FA")
     for axis, title in zip(axes, ("Activation outputs", "Elementwise derivatives")):
         _style_axis(axis, title)
     functions = (("Sigmoid", activations.sigmoid, activations.sigmoid_derivative),
@@ -204,7 +204,7 @@ def _render_module_3() -> None:
         axes[0].plot(x_values, function(x_values), label=label, linewidth=2)
         axes[1].plot(x_values, derivative(x_values), label=label, linewidth=2)
     for axis in axes:
-        axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
+        axis.legend(facecolor="#FFFFFF", edgecolor="#C8D9E6", labelcolor="#2F4156")
         axis.set_xlabel("Input x")
     axes[0].set_ylabel("f(x)")
     axes[1].set_ylabel("f′(x)")
@@ -216,8 +216,8 @@ def _render_module_3() -> None:
     probabilities = activations.softmax(logits)
     st.code(f"logits = {logits}\nsoftmax(logits) = {np.array2string(probabilities, precision=5)}\n"
             f"probability sum = {probabilities.sum():.6f}", language="text")
-    figure, axis = plt.subplots(figsize=(6.0, 2.8), facecolor=NAVY)
-    axis.set_facecolor(NAVY)
+    figure, axis = plt.subplots(figsize=(6.0, 2.8), facecolor="#F3F6FA")
+    axis.set_facecolor("#FFFFFF")
     axis.bar(("Class 1", "Class 2", "Class 3"), probabilities, color=(BLUE, CYAN, VIOLET))
     _style_axis(axis, "Softmax probabilities for the example logits")
     axis.set_ylim(0.0, 1.0)
@@ -381,13 +381,13 @@ def _render_module_7() -> None:
         chosen = st.selectbox("Genuine saved experiment", tuple(labels), key="learn_m7_saved_experiment")
         record = labels[chosen]
         history = record["history"]
-        figure, axis = plt.subplots(figsize=(8.0, 3.8), facecolor=NAVY)
+        figure, axis = plt.subplots(figsize=(8.0, 3.8), facecolor="#F3F6FA")
         _style_axis(axis, "Stored loss history · actual experiment")
         axis.plot(history["epoch"], history["training_loss"], color=BLUE, label="Training loss", linewidth=2.1)
         if "validation_loss" in history:
             axis.plot(history["epoch"], history["validation_loss"], color=CYAN, label="Validation loss", linewidth=2.1)
         axis.set_xlabel("Epoch"); axis.set_ylabel("Loss")
-        axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
+        axis.legend(facecolor="#FFFFFF", edgecolor="#C8D9E6", labelcolor="#2F4156")
         figure.tight_layout(); st.pyplot(figure, width="stretch"); plt.close(figure)
     else:
         st.info("No saved experiment history is available yet, so no training curves are shown.")
@@ -435,18 +435,43 @@ RENDERERS = (_render_module_1, _render_module_2, _render_module_3, _render_modul
 
 def render_learn_dnn() -> None:
     """Render module selector, progress, lessons, quizzes, and practical links."""
-    st.markdown('<div class="eyebrow">PRINCIPLES, EXPLAINED STEP BY STEP</div>', unsafe_allow_html=True)
-    st.title("Learn DNN")
-    st.markdown("Build the mathematical intuition behind neural networks with short explanations and live examples.")
-    selected = st.selectbox("Learning module", MODULES, key="learn_dnn_module")
-    module_index = MODULES.index(selected)
-    completed = set(st.session_state.get(COMPLETED_KEY, []))
-    st.markdown("#### Session progress")
-    st.progress(len(completed) / len(MODULES), text=f"{len(completed)} of {len(MODULES)} modules completed")
-    if st.button("Reset learning progress", key="learn_dnn_reset"):
-        st.session_state[COMPLETED_KEY] = []
-        for module_id in MODULE_IDS:
-            st.session_state.pop(f"{FEEDBACK_PREFIX}{module_id}", None)
-        st.rerun()
-    st.markdown(f"## {selected}")
-    RENDERERS[module_index]()
+    with st.container(key="learn_dnn_page"):
+        _render_learning_center()
+
+
+def _render_learning_center() -> None:
+    st.markdown(
+        """<section class="hero playground-hero learn-hero">
+            <div class="hero-copy">
+                <div class="hero-kicker">PRINCIPLES, EXPLAINED STEP BY STEP</div>
+                <h1>Learn DNN<span class="hero-period">.</span></h1>
+                <div class="hero-tagline">Build the intuition behind neural networks.</div>
+                <p class="hero-description">Explore core concepts through concise lessons, live calculations, and knowledge checks.</p>
+                <div class="hero-chip"><span class="status-dot"></span>Eight guided modules · Interactive examples</div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span>
+                <span class="neuron n1"></span><span class="neuron n2"></span><span class="neuron n3"></span>
+                <span class="neuron n4"></span><span class="neuron n5"></span><span class="neuron n6"></span>
+                <span class="neuron n7"></span><span class="neuron n8"></span><span class="neuron n9"></span>
+            </div>
+        </section>""",
+        unsafe_allow_html=True,
+    )
+    with st.container(border=True, key="learn_dnn_controls_panel"):
+        selected = st.selectbox("Learning module", MODULES, key="learn_dnn_module")
+        module_index = MODULES.index(selected)
+        completed = set(st.session_state.get(COMPLETED_KEY, []))
+        progress_col, reset_col = st.columns([4, 1], vertical_alignment="center")
+        with progress_col:
+            st.progress(len(completed) / len(MODULES), text=f"{len(completed)} of {len(MODULES)} modules completed")
+        with reset_col:
+            if st.button("Reset progress", key="learn_dnn_reset", width="stretch"):
+                st.session_state[COMPLETED_KEY] = []
+                for module_id in MODULE_IDS:
+                    st.session_state.pop(f"{FEEDBACK_PREFIX}{module_id}", None)
+                st.rerun()
+
+    with st.container(border=True, key="learn_dnn_lesson_panel"):
+        st.markdown(f'<div class="learn-module-title"><span>MODULE {module_index + 1:02d}</span><h2>{selected}</h2></div>', unsafe_allow_html=True)
+        RENDERERS[module_index]()
