@@ -6,7 +6,6 @@ import streamlit as st
 
 from .models import Adam, NeuralNetwork, SGD, SGDMomentum
 from .models.losses import binary_cross_entropy
-from .visualization import BLUE, CYAN, GRID, MUTED, NAVY, TEXT, VIOLET
 
 
 ACTIVATIONS = {"ReLU": "relu", "Leaky ReLU": "leaky_relu", "Sigmoid": "sigmoid", "Tanh": "tanh"}
@@ -25,8 +24,8 @@ def plot_backpropagation_network(network: NeuralNetwork, inputs: np.ndarray) -> 
         raise ValueError("Run forward propagation before drawing live neuron values.")
     widths = network.layer_sizes
     largest = max(widths)
-    figure, axis = plt.subplots(figsize=(max(7, len(widths) * 2.1), max(4.2, largest * 0.72)), facecolor=NAVY)
-    axis.set_facecolor(NAVY)
+    figure, axis = plt.subplots(figsize=(max(7, len(widths) * 2.1), max(4.2, largest * 0.72)), facecolor="#F3F6FA")
+    axis.set_facecolor("#FFFFFF")
     x_positions = np.linspace(0.08, 0.92, len(widths))
     positions: list[list[tuple[float, float]]] = []
     for x_pos, width in zip(x_positions, widths):
@@ -39,25 +38,25 @@ def plot_backpropagation_network(network: NeuralNetwork, inputs: np.ndarray) -> 
                 weight = float(weights[target_index, source_index])
                 positive = weight >= 0
                 axis.plot(
-                    [x1, x2], [y1, y2], color=CYAN if positive else VIOLET,
+                    [x1, x2], [y1, y2], color="#397F8B" if positive else "#8B79CA",
                     linewidth=0.45 + 1.35 * abs(weight) / max(max_weight, 1e-12),
                     alpha=0.65, zorder=1,
                 )
     for layer_index, layer_positions in enumerate(positions):
         values = inputs if layer_index == 0 else network.activations[layer_index].reshape(-1)
-        color = BLUE if layer_index == 0 else CYAN if layer_index == len(widths) - 1 else VIOLET
+        color = "#2F5F83" if layer_index == 0 else "#397F8B" if layer_index == len(widths) - 1 else "#8B79CA"
         for neuron_index, (x_pos, y_pos) in enumerate(layer_positions):
-            axis.scatter([x_pos], [y_pos], s=620, color=color, edgecolors=TEXT, linewidths=0.9, zorder=3)
-            axis.text(x_pos, y_pos, f"{values[neuron_index]:.3f}", color=("#0b1020" if color == VIOLET else "#edf3ff"), fontsize=8,
+            axis.scatter([x_pos], [y_pos], s=620, color=color, edgecolors="#FFFFFF", linewidths=1.2, zorder=3)
+            axis.text(x_pos, y_pos, f"{values[neuron_index]:.3f}", color="#FFFFFF", fontsize=8,
                       weight="bold", ha="center", va="center", zorder=4)
             axis.text(x_pos, y_pos - 0.095, f"{['Input', 'Hidden', 'Output'][0 if layer_index == 0 else 2 if layer_index == len(widths)-1 else 1]} {neuron_index + 1}",
-                      color=TEXT, fontsize=7, ha="center", va="top")
+                      color="#40566F", fontsize=7, ha="center", va="top")
     for index, (x_pos, width) in enumerate(zip(x_positions, widths)):
         label = "Input" if index == 0 else "Output · sigmoid" if index == len(widths) - 1 else f"Hidden · {network.hidden_activation}"
         axis.text(x_pos, 0.99, f"{label}\n{width} neuron{'s' if width != 1 else ''}",
-                  color=TEXT, fontsize=8, ha="center", va="top")
-    axis.text(0.03, 0.02, "+ cyan = positive weight", color=CYAN, fontsize=8, ha="left")
-    axis.text(0.53, 0.02, "− violet = negative weight", color=VIOLET, fontsize=8, ha="left")
+                  color="#40566F", fontsize=8, ha="center", va="top")
+    axis.text(0.03, 0.02, "+ teal = positive weight", color="#397F8B", fontsize=8, ha="left")
+    axis.text(0.53, 0.02, "− violet = negative weight", color="#8B79CA", fontsize=8, ha="left")
     axis.set_xlim(0, 1)
     axis.set_ylim(-0.08, 1.13)
     axis.axis("off")
@@ -133,20 +132,20 @@ def _render_gradient_details(gradients: dict[str, object]) -> None:
     st.markdown("#### Parameter gradients")
     st.caption("For each layer: dW = dZ @ A_previousᵀ and db = sum(dZ over samples). The loss derivative already includes averaging.")
     st.table(_parameter_table(st.session_state[STATE_KEY]["network"], gradients))
-    figure, axis = plt.subplots(figsize=(7.5, 3.2), facecolor=NAVY)
-    axis.set_facecolor(NAVY)
+    figure, axis = plt.subplots(figsize=(7.5, 3.2), facecolor="#F3F6FA")
+    axis.set_facecolor("#FFFFFF")
     layer_labels = [f"Layer {index + 1}" for index in range(len(gradients["weight_norms"]))]
     x = np.arange(len(layer_labels))
-    axis.bar(x - 0.18, gradients["weight_norms"], 0.36, color=BLUE, label="||dW||₂")
-    axis.bar(x + 0.18, gradients["bias_norms"], 0.36, color=VIOLET, label="||db||₂")
-    axis.set_xticks(x, layer_labels, color=MUTED)
-    axis.set_ylabel("Gradient L2 norm", color=MUTED)
-    axis.tick_params(colors=MUTED)
-    axis.set_title("Gradient magnitude by layer", color=TEXT, loc="left")
+    axis.bar(x - 0.18, gradients["weight_norms"], 0.36, color="#2F5F83", label="||dW||₂")
+    axis.bar(x + 0.18, gradients["bias_norms"], 0.36, color="#8B79CA", label="||db||₂")
+    axis.set_xticks(x, layer_labels, color="#567C8D")
+    axis.set_ylabel("Gradient L2 norm", color="#567C8D")
+    axis.tick_params(colors="#567C8D")
+    axis.set_title("Gradient magnitude by layer", color="#17263F", loc="left")
     for spine in axis.spines.values():
-        spine.set_color(GRID)
-    axis.grid(axis="y", color=GRID, alpha=0.55)
-    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
+        spine.set_color("#C8D9E6")
+    axis.grid(axis="y", color="#C8D9E6", alpha=0.75)
+    axis.legend(facecolor="#FFFFFF", edgecolor="#C8D9E6", labelcolor="#2F4156")
     figure.tight_layout()
     st.pyplot(figure, width="stretch")
     plt.close(figure)
@@ -154,25 +153,51 @@ def _render_gradient_details(gradients: dict[str, object]) -> None:
 
 def render_backpropagation_explorer() -> None:
     """Render the step-by-step forward, gradient, and parameter update lesson."""
-    st.markdown('<div class="eyebrow">FOLLOW THE CHAIN RULE THROUGH A NETWORK</div>', unsafe_allow_html=True)
-    st.title("Backpropagation Explorer")
-    st.markdown("Inspect one real forward and backward pass, then explicitly apply a single optimizer update.")
+    with st.container(key="backpropagation_explorer_page"):
+        _render_backpropagation_content()
 
-    st.markdown("### 1 · Network configuration")
-    columns = st.columns(5, gap="medium")
-    with columns[0]:
-        hidden_count = st.selectbox("Hidden layers", (1, 2), key="backprop_hidden_count")
-    sizes = []
-    for index in range(hidden_count):
-        sizes.append(st.number_input(f"Layer {index + 1} neurons", 1, 6, 3, 1, key=f"backprop_width_{index}"))
-    with columns[1]:
-        activation_label = st.selectbox("Hidden activation", tuple(ACTIVATIONS), key="backprop_activation")
-    with columns[2]:
-        seed = int(st.number_input("Initialization seed", 0, 999_999, 13, 1, key="backprop_seed"))
-    with columns[3]:
-        optimizer_name = st.selectbox("Update optimizer", OPTIMIZERS, key="backprop_optimizer")
-    with columns[4]:
-        learning_rate = st.number_input("Learning rate", 0.0001, 1.0, 0.05, 0.001, format="%.4f", key="backprop_lr")
+
+def _render_backpropagation_content() -> None:
+    st.markdown(
+        """<section class="hero playground-hero backprop-hero">
+            <div class="hero-copy">
+                <div class="hero-kicker">FOLLOW THE CHAIN RULE</div>
+                <h1>Backpropagation Explorer<span class="hero-period">.</span></h1>
+                <div class="hero-tagline">Trace how a network learns from one example.</div>
+                <p class="hero-description">Inspect a real forward pass, calculate gradients, and apply one explicit parameter update.</p>
+                <div class="hero-chip"><span class="status-dot"></span>Live NumPy calculations · Step-by-step</div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span>
+                <span class="neuron n1"></span><span class="neuron n2"></span><span class="neuron n3"></span>
+                <span class="neuron n4"></span><span class="neuron n5"></span><span class="neuron n6"></span>
+                <span class="neuron n7"></span><span class="neuron n8"></span><span class="neuron n9"></span>
+            </div>
+        </section>""",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown('<div class="backprop-section-heading"><span>01</span><h2>Network configuration</h2></div>', unsafe_allow_html=True)
+    with st.container(border=True, key="backprop_configuration_panel"):
+        columns = st.columns(3, gap="medium")
+        with columns[0]:
+            hidden_count = st.selectbox("Hidden layers", (1, 2), key="backprop_hidden_count")
+        with columns[1]:
+            activation_label = st.selectbox("Hidden activation", tuple(ACTIVATIONS), key="backprop_activation")
+        with columns[2]:
+            seed = int(st.number_input("Initialization seed", 0, 999_999, 13, 1, key="backprop_seed"))
+        width_columns = st.columns(hidden_count, gap="medium")
+        sizes = [
+            width_columns[index].number_input(
+                f"Layer {index + 1} neurons", 1, 6, 3, 1, key=f"backprop_width_{index}"
+            )
+            for index in range(hidden_count)
+        ]
+        optimizer_columns = st.columns(2, gap="medium")
+        with optimizer_columns[0]:
+            optimizer_name = st.selectbox("Update optimizer", OPTIMIZERS, key="backprop_optimizer")
+        with optimizer_columns[1]:
+            learning_rate = st.number_input("Learning rate", 0.0001, 1.0, 0.05, 0.001, format="%.4f", key="backprop_lr")
 
     momentum, beta1, beta2, epsilon = 0.9, 0.9, 0.999, 1e-8
     if optimizer_name == "Momentum":
@@ -183,20 +208,21 @@ def render_backpropagation_explorer() -> None:
         beta2 = params[1].number_input("Adam β₂", 0.0, 0.9999, 0.999, 0.001, format="%.4f", key="backprop_beta2")
         epsilon = params[2].number_input("Adam ε", 1e-10, 1e-3, 1e-8, format="%.1e", key="backprop_epsilon")
 
-    st.markdown("### 2 · Input and target")
-    sample_idx = st.selectbox(
-        "Deterministic XOR example row",
-        range(len(EXAMPLE_INPUTS)),
-        format_func=lambda index: f"Row {index + 1}: ({EXAMPLE_INPUTS[index, 0]:+.1f}, {EXAMPLE_INPUTS[index, 1]:+.1f}) → {EXAMPLE_TARGETS[index]}",
-        key="backprop_example_row",
-    )
-    sample = EXAMPLE_INPUTS[sample_idx]
-    input_columns = st.columns(3)
-    x1 = input_columns[0].number_input("Input x₁", value=float(sample[0]), step=0.1, format="%.3f", key="backprop_x1")
-    x2 = input_columns[1].number_input("Input x₂", value=float(sample[1]), step=0.1, format="%.3f", key="backprop_x2")
-    target = input_columns[2].number_input("Binary target y", min_value=0.0, max_value=1.0,
-                                            value=float(EXAMPLE_TARGETS[sample_idx]), step=1.0, key="backprop_target")
-    st.caption("The sample selector provides a small deterministic XOR set. The feature and target fields can be edited directly.")
+    st.markdown('<div class="backprop-section-heading"><span>02</span><h2>Input and target</h2></div>', unsafe_allow_html=True)
+    with st.container(border=True, key="backprop_sample_panel"):
+        sample_idx = st.selectbox(
+            "Deterministic XOR example row",
+            range(len(EXAMPLE_INPUTS)),
+            format_func=lambda index: f"Row {index + 1}: ({EXAMPLE_INPUTS[index, 0]:+.1f}, {EXAMPLE_INPUTS[index, 1]:+.1f}) → {EXAMPLE_TARGETS[index]}",
+            key="backprop_example_row",
+        )
+        sample = EXAMPLE_INPUTS[sample_idx]
+        input_columns = st.columns(3, gap="medium")
+        x1 = input_columns[0].number_input("Input x₁", value=float(sample[0]), step=0.1, format="%.3f", key="backprop_x1")
+        x2 = input_columns[1].number_input("Input x₂", value=float(sample[1]), step=0.1, format="%.3f", key="backprop_x2")
+        target = input_columns[2].number_input("Binary target y", min_value=0.0, max_value=1.0,
+                                                value=float(EXAMPLE_TARGETS[sample_idx]), step=1.0, key="backprop_target")
+        st.caption("The sample selector provides a small deterministic XOR set. The feature and target fields can be edited directly.")
 
     init_clicked = st.button("Initialize Network", type="primary", key="backprop_initialize")
     if init_clicked:

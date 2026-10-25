@@ -1,6 +1,7 @@
 """NeuroLab Streamlit application entry point."""
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 from src.neurolab.dashboard import render_dashboard
 from src.neurolab.dataset_explorer import render_dataset_explorer
@@ -73,6 +74,27 @@ with st.sidebar:
         '<div class="sidebar-footer"><span class="status-dot"></span> Foundation in development</div>',
         unsafe_allow_html=True,
     )
+
+previous_page = st.session_state.get("_last_rendered_page")
+if previous_page is not None and previous_page != selected:
+    # Streamlit keeps the main pane's scroll position across reruns. Reset it
+    # only when navigation changes, so a newly opened page starts at its title.
+    components.html(
+        """<script>
+        setTimeout(() => {
+          try {
+            const doc = window.parent.document;
+            const main = doc.querySelector('[data-testid="stMain"]')
+              || doc.querySelector('[data-testid="stAppViewContainer"] .main');
+            if (main) main.scrollTo({ top: 0, behavior: 'instant' });
+            window.parent.scrollTo({ top: 0, behavior: 'instant' });
+          } catch (_) { /* Keep navigation usable if the browser blocks frame access. */ }
+        }, 80);
+        </script>""",
+        height=0,
+        scrolling=False,
+    )
+st.session_state["_last_rendered_page"] = selected
 
 if selected == "Dashboard":
     render_dashboard()

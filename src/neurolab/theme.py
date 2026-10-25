@@ -686,6 +686,32 @@ def apply_theme() -> None:
             color: #f3f6fa !important;
             fill: #f3f6fa !important;
         }
+        [data-testid="stSidebarCollapseButton"] button {
+            display: grid !important;
+            place-items: center !important;
+            width: 2.4rem !important;
+            height: 2.4rem !important;
+            min-width: 2.4rem !important;
+            min-height: 2.4rem !important;
+            padding: 0 !important;
+            border: 1px solid #536d8a !important;
+            border-radius: 0.72rem !important;
+            background: #2a4566 !important;
+            color: #ffffff !important;
+            box-shadow: 0 3px 9px #08152533 !important;
+            transition: background-color 0.15s ease, border-color 0.15s ease !important;
+        }
+        [data-testid="stSidebarCollapseButton"] button svg { display: none !important; }
+        [data-testid="stSidebarCollapseButton"] button::after {
+            content: "×";
+            display: block;
+            color: #ffffff !important;
+            font: 500 1.55rem/1 'DM Sans', sans-serif !important;
+        }
+        [data-testid="stSidebarCollapseButton"] button:hover {
+            background: #355575 !important;
+            border-color: #7e9bb8 !important;
+        }
 
         /* Dashboard launch buttons keep one readable color in every click state. */
         [class*="st-key-dashboard_open_"] .stButton > button,
@@ -757,6 +783,89 @@ def apply_theme() -> None:
             color: #71849a !important;
             -webkit-text-fill-color: #71849a !important;
             opacity: 1 !important;
+        }
+
+        /* Backpropagation Explorer: guided, readable panels matching the other labs. */
+        [class*="st-key-backpropagation_explorer_page"] .backprop-hero {
+            min-height: 245px;
+            margin: 0.5rem 0 1.35rem;
+        }
+        .backprop-section-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 1.45rem 0 0.75rem;
+        }
+        .backprop-section-heading > span {
+            display: inline-grid;
+            place-items: center;
+            min-width: 2rem;
+            height: 2rem;
+            border: 1px solid #c9d9e8;
+            border-radius: 0.65rem;
+            background: #eaf1f7;
+            color: #2f5f83;
+            font: 700 0.7rem 'Space Grotesk', sans-serif;
+        }
+        .backprop-section-heading h2 {
+            margin: 0;
+            color: #17263f !important;
+            font: 700 1.15rem 'Space Grotesk', sans-serif;
+        }
+        [class*="st-key-backprop_configuration_panel"],
+        [class*="st-key-backprop_sample_panel"] {
+            margin: 0 0 1rem;
+            padding: 1rem 1.15rem 0.6rem;
+            border: 2px solid #b5c7d9 !important;
+            border-radius: 0.95rem !important;
+            background: #ffffff !important;
+            box-shadow: 0 5px 16px rgba(23, 38, 63, 0.06) !important;
+        }
+        [class*="st-key-backpropagation_explorer_page"] label,
+        [class*="st-key-backpropagation_explorer_page"] [data-testid="stCaptionContainer"] {
+            color: #40566f !important;
+            font-weight: 600 !important;
+        }
+        [class*="st-key-backpropagation_explorer_page"] [data-baseweb="input"] > div,
+        [class*="st-key-backpropagation_explorer_page"] [data-baseweb="select"] > div {
+            background: #f7fafd !important;
+            border: 1.7px solid #a8bdcf !important;
+            border-radius: 0.68rem !important;
+        }
+        [class*="st-key-backpropagation_explorer_page"] [data-baseweb="input"] > div:focus-within,
+        [class*="st-key-backpropagation_explorer_page"] [data-baseweb="select"] > div:focus-within {
+            background: #ffffff !important;
+            border: 2px solid #4e73d8 !important;
+            box-shadow: 0 0 0 3px rgba(78, 115, 216, 0.15) !important;
+        }
+        [class*="st-key-backpropagation_explorer_page"] input,
+        [class*="st-key-backpropagation_explorer_page"] [data-baseweb="select"] div {
+            color: #17263f !important;
+            -webkit-text-fill-color: #17263f !important;
+            font-weight: 600 !important;
+        }
+        [class*="st-key-backpropagation_explorer_page"] [data-testid="stExpander"] {
+            border: 1.5px solid #b5c7d9 !important;
+            border-radius: 0.85rem !important;
+            background: #ffffff !important;
+        }
+        [class*="st-key-backpropagation_explorer_page"] [data-testid="stExpander"] summary p {
+            color: #17263f !important;
+            font-weight: 700 !important;
+        }
+        [class*="st-key-backpropagation_explorer_page"] [data-testid="stMetric"] {
+            min-height: 5rem;
+            border: 1.5px solid #c4d3e1;
+        }
+        [class*="st-key-backpropagation_explorer_page"] [data-testid="stTable"],
+        [class*="st-key-backpropagation_explorer_page"] [data-testid="stDataFrame"] {
+            border: 1.5px solid #c4d3e1;
+            border-radius: 0.8rem;
+            overflow: hidden;
+        }
+        @media (max-width: 820px) {
+            [class*="st-key-backprop_configuration_panel"],
+            [class*="st-key-backprop_sample_panel"] { padding: 0.8rem 0.8rem 0.4rem; }
         }
         </style>
         """,
