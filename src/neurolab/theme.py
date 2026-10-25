@@ -632,6 +632,60 @@ def apply_theme() -> None:
             .hero-kicker, .eyebrow { font-size: 0.58rem; letter-spacing: 0.12em; }
             .brand-mark { width: 2.4rem; height: 2.4rem; }
         }
+
+        /* Keep the NeuroLab navigation legible and distinctive on deep navy. */
+        [data-testid="stSidebar"], [data-testid="stSidebar"] > div,
+        [data-testid="stSidebar"] [data-testid="stSidebarContent"] {
+            background: #17263f !important;
+            border-right: 1px solid #304763 !important;
+            color: #ebf4ff !important;
+        }
+        [data-testid="stSidebar"] .brand-name { color: #ffffff !important; }
+        [data-testid="stSidebar"] .brand-tagline { color: #bdcddd !important; }
+        [data-testid="stSidebar"] .brand-mark {
+            border-color: #7098e866 !important;
+            background: linear-gradient(145deg, #233c5e, #315982) !important;
+            box-shadow: 0 7px 18px #08152555 !important;
+        }
+        [data-testid="stSidebar"] .brand-mark path { stroke: #8db8ff !important; }
+        [data-testid="stSidebar"] .brand-mark .node { stroke: #e6f0ff !important; }
+        [data-testid="stSidebar"] .sidebar-label { color: #92a9c2 !important; }
+        [data-testid="stSidebar"] .sidebar-footer { color: #91a5bc !important; }
+        [data-testid="stSidebar"] .stButton > button,
+        [data-testid="stSidebar"] .stButton > button * {
+            color: #d5e0ec !important;
+            -webkit-text-fill-color: #d5e0ec !important;
+        }
+        [data-testid="stSidebar"] .stButton > button {
+            background: transparent !important;
+            border: 1px solid transparent !important;
+        }
+        [data-testid="stSidebar"] .stButton > button:hover,
+        [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:hover {
+            background: #213650 !important;
+            border-color: #314b6b !important;
+            color: #ffffff !important;
+        }
+        [data-testid="stSidebar"] [data-testid="stBaseButton-primary"],
+        [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] * {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+        [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
+            background: #2a4566 !important;
+            border-color: #426b91 !important;
+            box-shadow: inset 3px 0 #49b7c4, 0 5px 14px #08152533 !important;
+        }
+        [data-testid="stSidebarCollapseButton"] button {
+            border: 1px solid #49627e !important;
+            background: #223752 !important;
+            color: #f3f6fa !important;
+        }
+        [data-testid="stSidebarCollapseButton"] button svg,
+        [data-testid="stSidebarCollapseButton"] button svg path {
+            color: #f3f6fa !important;
+            fill: #f3f6fa !important;
+        }
         </style>
         """,
         unsafe_allow_html=True,
