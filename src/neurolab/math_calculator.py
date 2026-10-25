@@ -296,15 +296,35 @@ def _optimizer_state_id(name: str, layer: int, kind: str, row: int, column: int,
 
 def render_math_calculator() -> None:
     """Render the step-guided math lab with editable parameters and real calculations."""
-    st.markdown('<div class="eyebrow">CALCULATE · TRACE · UNDERSTAND</div>', unsafe_allow_html=True)
-    st.title("Neural Network Math Calculator")
-    st.markdown("Enter values and follow the same operations NeuroLab uses for forward propagation, loss, gradients, and parameter updates.")
+    with st.container(key="math_calculator_page"):
+        _render_math_calculator_content()
+
+
+def _render_math_calculator_content() -> None:
+    st.markdown(
+        """<section class="hero playground-hero">
+            <div class="hero-copy">
+                <div class="hero-kicker">MATH LAB · TRACE THE COMPUTATION</div>
+                <h1>Neural Math Calculator<span class="hero-period">.</span></h1>
+                <div class="hero-tagline">Follow every value from input to update.</div>
+                <p class="hero-description">Explore neuron calculations, forward propagation, loss, gradients, and parameter updates using editable values and NeuroLab's NumPy engine.</p>
+                <div class="hero-chip"><span class="status-dot"></span>Every result comes from the values you enter</div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span>
+                <span class="neuron n1"></span><span class="neuron n2"></span><span class="neuron n3"></span>
+                <span class="neuron n4"></span><span class="neuron n5"></span><span class="neuron n6"></span>
+                <span class="neuron n7"></span><span class="neuron n8"></span><span class="neuron n9"></span>
+            </div>
+        </section>""",
+        unsafe_allow_html=True,
+    )
 
     if "mathcalc_guide_step" not in st.session_state:
         st.session_state.mathcalc_guide_step = 0
     guide_step = int(st.session_state.mathcalc_guide_step)
     st.progress((guide_step + 1) / len(GUIDE_STEPS), text=f"Guided sequence · Step {guide_step + 1} of {len(GUIDE_STEPS)}: {GUIDE_STEPS[guide_step]}")
-    st.info(GUIDE_TEXT[guide_step])
+    st.markdown(f'<div class="math-guide-note"><span>STEP {guide_step + 1:02d}</span>{GUIDE_TEXT[guide_step]}</div>', unsafe_allow_html=True)
     step_cols = st.columns([1, 5, 1])
     if step_cols[0].button("← Back", key="mathcalc_guide_back", disabled=guide_step == 0):
         st.session_state.mathcalc_guide_step = max(0, guide_step - 1)

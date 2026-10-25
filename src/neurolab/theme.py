@@ -190,6 +190,15 @@ def apply_theme() -> None:
         [class*="st-key-experiment_wizard_page"] .playground-hero { min-height:245px; margin:.5rem 0 1.6rem; }
         [class*="st-key-experiment_wizard_page"] [data-testid="stProgressBar"] { margin:.3rem 0 1.15rem; }
         [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] { margin:.5rem 0 1.1rem; padding:1.25rem 1.35rem; border-color:var(--line); border-radius:1rem; background:#FFFFFF; box-shadow:0 5px 17px #1B355008; }
+        [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] [data-baseweb="input"] > div,
+        [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] [data-baseweb="textarea"] > div,
+        [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] [data-baseweb="select"] > div { background:#F7FAFD !important; border:1.5px solid #AFC3D6 !important; border-radius:.68rem !important; box-shadow:0 1px 2px #17263F0A; }
+        [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] [data-baseweb="input"] > div:focus-within,
+        [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] [data-baseweb="textarea"] > div:focus-within,
+        [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] [data-baseweb="select"] > div:focus-within { background:#FFFFFF !important; border-color:var(--blue) !important; box-shadow:0 0 0 3px #4E73D826 !important; }
+        [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] input,
+        [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] textarea { color:var(--navy) !important; }
+        [class*="st-key-experiment_wizard_page"] [class*="st-key-wizard_step_panel"] label { color:#40566F !important; font-weight:600 !important; }
         .wizard-step-heading { display:flex; align-items:center; gap:.85rem; margin:.2rem 0 .8rem; }
         .wizard-step-heading > span { padding:.38rem .62rem; border-radius:2rem; background:#EAF1F7; color:var(--teal); font:700 .65rem 'DM Sans',sans-serif; letter-spacing:.12em; }
         .wizard-step-heading h2 { margin:0; color:var(--navy) !important; font:700 1.2rem 'Space Grotesk',sans-serif; }
@@ -201,6 +210,30 @@ def apply_theme() -> None:
         [class*="st-key-wizard_back_"] button, [class*="st-key-wizard_reset"] button, [class*="st-key-wizard_open_reports"] button { min-height:2.8rem !important; border:1px solid var(--line) !important; border-radius:.78rem !important; background:#FFFFFF !important; color:var(--navy) !important; }
         [class*="st-key-wizard_back_"] button *, [class*="st-key-wizard_reset"] button *, [class*="st-key-wizard_open_reports"] button * { color:var(--navy) !important; -webkit-text-fill-color:var(--navy) !important; }
         [class*="st-key-wizard_back_"] button:hover, [class*="st-key-wizard_reset"] button:hover, [class*="st-key-wizard_open_reports"] button:hover { border-color:#AFC6D9 !important; background:#F5F9FC !important; }
+
+        /* Neural Math Calculator: clear guide steps, tabs, and editable fields. */
+        [class*="st-key-math_calculator_page"] .playground-hero { min-height:245px; margin:.5rem 0 1.6rem; }
+        [class*="st-key-math_calculator_page"] [data-testid="stProgressBar"] { margin:.3rem 0 1rem; }
+        .math-guide-note { display:flex; align-items:center; gap:.75rem; margin:.2rem 0 .65rem; padding:.85rem 1rem; border:1px solid #C9D9E8; border-left:4px solid var(--teal); border-radius:.78rem; background:#EAF1F7; color:var(--navy); font-size:.86rem; line-height:1.5; }
+        .math-guide-note span { flex:0 0 auto; color:var(--teal); font:700 .65rem 'DM Sans',sans-serif; letter-spacing:.12em; }
+        [class*="st-key-math_calculator_page"] [data-testid="stTabs"] [data-baseweb="tab-list"] { display:flex; gap:.3rem; padding:.35rem; border:1px solid var(--line); border-radius:.85rem; background:#EAF1F7; }
+        [class*="st-key-math_calculator_page"] [data-testid="stTabs"] [role="tab"] { justify-content:center; min-height:2.7rem; padding:.55rem .7rem; border:1px solid transparent; border-radius:.62rem; color:#536A82 !important; font-size:.79rem; transition:background .15s,border-color .15s,color .15s,box-shadow .15s; }
+        [class*="st-key-math_calculator_page"] [data-testid="stTabs"] [role="tab"][aria-selected="true"] { border-color:#D3DFEA; background:#FFFFFF; color:var(--navy) !important; box-shadow:0 2px 7px #17263F12; }
+        [class*="st-key-math_calculator_page"] [data-testid="stTabs"] [data-baseweb="tab-highlight"] { display:none; }
+        [class*="st-key-math_calculator_page"] [data-testid="stTabs"] [role="tabpanel"] { padding:1rem .15rem .25rem; }
+        [class*="st-key-math_calculator_page"] [data-baseweb="input"] > div,
+        [class*="st-key-math_calculator_page"] [data-baseweb="textarea"] > div,
+        [class*="st-key-math_calculator_page"] [data-baseweb="select"] > div { background:#F7FAFD !important; border:1.5px solid #AFC3D6 !important; border-radius:.68rem !important; box-shadow:0 1px 2px #17263F0A; }
+        [class*="st-key-math_calculator_page"] [data-baseweb="input"] > div:focus-within,
+        [class*="st-key-math_calculator_page"] [data-baseweb="textarea"] > div:focus-within,
+        [class*="st-key-math_calculator_page"] [data-baseweb="select"] > div:focus-within { background:#FFFFFF !important; border-color:var(--blue) !important; box-shadow:0 0 0 3px #4E73D826 !important; }
+        [class*="st-key-math_calculator_page"] [data-baseweb="input"] input,
+        [class*="st-key-math_calculator_page"] [data-baseweb="textarea"] textarea { color:var(--navy) !important; }
+        [class*="st-key-math_calculator_page"] [data-testid="stCaptionContainer"] { color:var(--muted); }
+        [class*="st-key-mathcalc_guide_next"] button { min-height:2.8rem !important; border:1px solid #2F5F83 !important; border-radius:.75rem !important; background:linear-gradient(115deg,#17263F,#2F5F83) !important; color:#FFFFFF !important; font-weight:700 !important; box-shadow:0 5px 13px #17263F20 !important; }
+        [class*="st-key-mathcalc_guide_next"] button * { color:#FFFFFF !important; -webkit-text-fill-color:#FFFFFF !important; }
+        [class*="st-key-mathcalc_guide_back"] button { min-height:2.8rem !important; border:1px solid var(--line) !important; border-radius:.75rem !important; background:#FFFFFF !important; color:var(--navy) !important; }
+        [class*="st-key-mathcalc_guide_back"] button * { color:var(--navy) !important; -webkit-text-fill-color:var(--navy) !important; }
         @media (max-width: 800px) {
             .block-container { padding:1.1rem 1rem 2rem; }
             .hero { padding:1.6rem; min-height:290px; }
