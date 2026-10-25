@@ -106,6 +106,17 @@ def apply_theme() -> None:
         .feature-number { color:#8294A9; font:600 .68rem 'Space Grotesk',sans-serif; }
         .feature-card h3 { font-size:.98rem; margin:0 0 .35rem; letter-spacing:-.02em; }.feature-card p { font-size:.77rem; line-height:1.5; margin:0; min-height:2.2rem; }
         .card-link { margin-top:.65rem; color:var(--teal); font-size:.7rem; font-weight:700; }.card-link span { padding-left:.2rem; }
+        .dashboard-group-heading { display:flex; justify-content:space-between; align-items:end; margin:1.15rem 0 .72rem; }
+        .dashboard-group-heading span { color:var(--teal); font:700 .65rem 'DM Sans',sans-serif; letter-spacing:.17em; }
+        .dashboard-group-heading p { margin:.25rem 0 0; color:var(--muted); font-size:.78rem; }
+        [class*="st-key-dashboard_module_"] { min-height:12.2rem; margin-bottom:.75rem; padding:1rem !important; border-color:var(--line) !important; border-radius:1rem !important; background:#FFFFFF !important; box-shadow:0 5px 16px #1B355008; transition:transform .16s,border-color .16s,box-shadow .16s; }
+        [class*="st-key-dashboard_module_"]:hover { transform:translateY(-2px); border-color:#AFC6D9 !important; box-shadow:0 10px 24px #1B355012; }
+        .dashboard-module-card { min-height:7.2rem; }
+        .dashboard-module-card h3 { margin:.1rem 0 .4rem; color:var(--navy) !important; font:700 .96rem 'Space Grotesk',sans-serif; letter-spacing:-.02em; }
+        .dashboard-module-card p { margin:0; color:var(--muted); font-size:.75rem; line-height:1.5; }
+        [class*="st-key-dashboard_open_"] button { min-height:2.35rem !important; border:1px solid #D2DFEA !important; border-radius:.65rem !important; background:#F5F9FC !important; color:var(--navy) !important; font:700 .76rem 'DM Sans',sans-serif !important; box-shadow:none !important; }
+        [class*="st-key-dashboard_open_"] button * { color:var(--navy) !important; -webkit-text-fill-color:var(--navy) !important; font:inherit !important; }
+        [class*="st-key-dashboard_open_"] button:hover { border-color:#9AB2C9 !important; background:#EAF1F7 !important; transform:none !important; }
         .info-panel { background:var(--surface); border:1px solid var(--line); border-radius:1rem; padding:1.3rem 1.4rem; min-height:158px; box-shadow:0 5px 16px #1B355008; }
         .info-panel h2 { font-size:1.08rem; margin:.2rem 0 .5rem; }.info-panel p { font-size:.79rem; line-height:1.6; margin:0; }
         .progress-track { height:6px; border-radius:5px; background:#E5ECF3; margin-top:1.1rem; overflow:hidden; }.progress-fill { width:24%;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--blue),var(--cyan)); }

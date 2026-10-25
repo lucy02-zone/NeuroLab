@@ -24,7 +24,7 @@ st.set_page_config(
     page_title="NeuroLab | Deep Neural Network Playground",
     page_icon="🧠",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 apply_theme()

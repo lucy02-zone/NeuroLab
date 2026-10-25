@@ -1,20 +1,75 @@
-"""Dashboard content for the NeuroLab application shell."""
+"""Dashboard content and module launchpad for the NeuroLab application shell."""
+
+import re
 
 import streamlit as st
 
+from .navigation import NAVIGATION
 
-FEATURES = (
-    ("01", "Network Playground", "Shape a network by choosing hidden layers and neurons.", "◉", "blue"),
-    ("02", "Dataset Playground", "Explore classic classification datasets such as XOR, moons, and circles.", "⌘", "cyan"),
-    ("03", "Training Visualization", "Follow loss, model behavior, and decision boundaries as learning unfolds.", "↗", "violet"),
-    ("04", "Optimizer Lab", "Compare the ideas behind SGD, Momentum, and Adam.", "⟳", "blue"),
-    ("05", "Backpropagation Explorer", "Trace how gradients connect predictions to weight updates.", "∇", "cyan"),
-    ("06", "Experiments & Reports", "Review configurations and take experiment findings with you.", "▤", "violet"),
+
+MODULES = {
+    "Network Playground": ("Configure a network and train it on a synthetic classification task.", "◉", "blue"),
+    "Dataset Explorer": ("Inspect data shape, class balance, noise, and validation splits.", "▦", "cyan"),
+    "Network Visualizer": ("See how neurons connect across the layers in your architecture.", "⌘", "violet"),
+    "Activation Functions": ("Compare activation curves and inspect their derivatives.", "ƒ", "blue"),
+    "Loss Functions": ("Explore how prediction errors become numerical loss values.", "∿", "cyan"),
+    "Experiment Wizard": ("Set up, train, evaluate, and save a reproducible experiment.", "✦", "violet"),
+    "Optimizer Lab": ("Compare SGD, Momentum, and Adam using matched experiments.", "⟳", "blue"),
+    "Model Manager": ("Export, import, inspect, and run predictions with model files.", "⇄", "cyan"),
+    "Experiments & Reports": ("Review saved experiment configurations and results.", "▤", "violet"),
+    "Math Calculator": ("Work through forward propagation, loss, gradients, and updates.", "∑", "blue"),
+    "Backpropagation Explorer": ("Trace gradients backward through a neural network.", "∇", "cyan"),
+    "Learn DNN": ("Build understanding with explanations and interactive lessons.", "✧", "violet"),
+    "Quiz & Challenge Center": ("Check your understanding with practice and timed quizzes.", "✎", "blue"),
+}
+
+GROUPS = (
+    ("BUILD & EXPLORE", "Shape a network and understand its inputs.", (
+        "Network Playground", "Dataset Explorer", "Network Visualizer",
+        "Activation Functions", "Loss Functions",
+    )),
+    ("TRAIN & COMPARE", "Run experiments, compare optimizers, and manage models.", (
+        "Experiment Wizard", "Optimizer Lab", "Model Manager", "Experiments & Reports",
+    )),
+    ("LEARN & PRACTICE", "Explore the mathematics and test your understanding.", (
+        "Math Calculator", "Backpropagation Explorer", "Learn DNN", "Quiz & Challenge Center",
+    )),
 )
 
 
+def _open_module(name: str) -> None:
+    """Navigate to a NeuroLab page selected from the dashboard."""
+    st.session_state["navigation_selection"] = name
+
+
+def _render_module_group(label: str, description: str, names: tuple[str, ...], start: int) -> int:
+    st.markdown(
+        f'<div class="dashboard-group-heading"><div><span>{label}</span>'
+        f'<p>{description}</p></div></div>',
+        unsafe_allow_html=True,
+    )
+    columns = st.columns(3, gap="medium")
+    for offset, name in enumerate(names):
+        description_text, icon, accent = MODULES[name]
+        slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
+        with columns[offset % 3]:
+            with st.container(border=True, key=f"dashboard_module_{slug}"):
+                st.markdown(
+                    f'<div class="dashboard-module-card {accent}">'
+                    f'<div class="feature-top"><span class="feature-icon">{icon}</span>'
+                    f'<span class="feature-number">{start + offset:02d}</span></div>'
+                    f'<h3>{name}</h3><p>{description_text}</p></div>',
+                    unsafe_allow_html=True,
+                )
+                st.button(
+                    "Open section  →", key=f"dashboard_open_{slug}",
+                    type="secondary", width="stretch", on_click=_open_module, args=(name,),
+                )
+    return start + len(names)
+
+
 def render_dashboard() -> None:
-    """Render the project overview and planned capabilities."""
+    """Render the NeuroLab overview and clickable launchpad for every module."""
     st.markdown('<div class="eyebrow">DEEP LEARNING, MADE VISIBLE</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="hero"><div class="hero-copy"><div class="hero-kicker">YOUR DNN LEARNING STUDIO</div>'
@@ -31,18 +86,19 @@ def render_dashboard() -> None:
         unsafe_allow_html=True,
     )
 
-    st.markdown('<div class="section-heading"><div><div class="eyebrow">THE LEARNING TOOLKIT</div>'
-                '<h2>Explore the building blocks</h2></div><span class="section-note">Interactive modules</span></div>',
-                unsafe_allow_html=True)
-    columns = st.columns(3, gap="medium")
-    for index, (number, title, description, icon, accent) in enumerate(FEATURES):
-        with columns[index % 3]:
-            st.markdown(
-                f'<article class="feature-card {accent}"><div class="feature-top"><span class="feature-icon">{icon}</span>'
-                f'<span class="feature-number">{number}</span></div><h3>{title}</h3>'
-                f'<p>{description}</p><div class="card-link">Explore concept <span>↗</span></div></article>',
-                unsafe_allow_html=True,
-            )
+    st.markdown(
+        '<div class="section-heading"><div><div class="eyebrow">YOUR LEARNING TOOLKIT</div>'
+        '<h2>Go straight to a NeuroLab tool</h2></div>'
+        '<span class="section-note">All modules · one click away</span></div>',
+        unsafe_allow_html=True,
+    )
+    if set(MODULES) != set(NAVIGATION) - {"Dashboard"}:
+        st.error("Dashboard shortcuts and application navigation are out of sync.")
+        return
+
+    number = 1
+    for label, description, names in GROUPS:
+        number = _render_module_group(label, description, names, number)
 
     left, right = st.columns([1.15, 0.85], gap="medium")
     with left:
