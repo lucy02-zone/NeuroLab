@@ -18,7 +18,7 @@ def apply_theme() -> None:
         p, li, label, [data-testid="stMarkdownContainer"] { color:var(--text); }
         p { color:var(--muted); line-height:1.65; }
         a { color:var(--plum-light) !important; }
-        [data-testid="stSidebar"], [data-testid="stSidebar"] > div { background:#2F4156 !important; border-right:1px solid var(--line); }
+        [data-testid="stSidebar"], [data-testid="stSidebar"] > div { background:#17263F !important; border-right:1px solid var(--line); }
         [data-testid="stSidebar"] > div { padding:1.5rem 1rem 1rem; }
         .brand-lockup { display:flex; align-items:center; gap:.78rem; margin:.2rem 0 1.7rem; min-width:0; }
         .brand-mark { flex:0 0 2.8rem; display:grid; place-items:center; width:2.8rem; height:2.8rem; border:1px solid #5B8FF966; border-radius:.9rem; background:linear-gradient(145deg,#182943,#243b5c); box-shadow:0 7px 18px #101a2b55; transition:transform .18s ease,box-shadow .18s ease; }
@@ -33,6 +33,9 @@ def apply_theme() -> None:
         .brand-name { color:#FFFFFF; font:700 1.12rem 'Space Grotesk',sans-serif; letter-spacing:-.025em; line-height:1.15; }
         .brand-tagline { margin-top:.3rem; color:#C8D9E6; font-size:.65rem; line-height:1.35; white-space:normal; }
         .sidebar-label { color:#C8D9E6; font-size:.65rem; font-weight:700; letter-spacing:.16em; margin:2.2rem 0 .6rem; }
+        [class*="st-key-network_playground_page"] h3 { display:flex; align-items:center; gap:.55rem; margin:1.65rem 0 .9rem; padding:.62rem .8rem; border-left:3px solid #567C8D; border-radius:.45rem; background:#FFFFFF; box-shadow:0 3px 12px #2F415610; font-size:1.12rem !important; letter-spacing:-.015em; }
+        [class*="st-key-network_playground_page"] [data-testid="stMetric"] { box-shadow:0 4px 14px #2F415610; }
+        [class*="st-key-network_playground_page"] [data-testid="stCaptionContainer"] { color:#567C8D; }
         [data-testid="stSidebar"] .stButton { margin:.08rem 0; }
         [data-testid="stSidebar"] .stButton > button {
             width:100%; min-height:2.7rem; justify-content:flex-start; text-align:left;

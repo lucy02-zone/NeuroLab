@@ -17,31 +17,41 @@ MUTED = "#a6b4cb"
 GRID = "#2a3955"
 
 
-def style_axis(axis: plt.Axes, title: str) -> None:
-    """Apply shared dark plotting colors and typography to a Matplotlib axis."""
-    axis.set_facecolor(NAVY)
-    axis.set_title(title, loc="left", color=TEXT, fontsize=12, pad=12)
-    axis.tick_params(colors=MUTED, labelsize=9)
-    axis.xaxis.label.set_color(MUTED)
-    axis.yaxis.label.set_color(MUTED)
+def style_axis(axis: plt.Axes, title: str, plot_theme: str = "dark") -> None:
+    """Apply shared NeuroLab colors to a Matplotlib axis."""
+    if plot_theme not in {"dark", "light"}:
+        raise ValueError("plot_theme must be 'dark' or 'light'.")
+    background, text, muted, grid = (
+        ("#FFFFFF", "#2F4156", "#567C8D", "#C8D9E6")
+        if plot_theme == "light" else (NAVY, TEXT, MUTED, GRID)
+    )
+    axis.set_facecolor(background)
+    axis.set_title(title, loc="left", color=text, fontsize=12, pad=12)
+    axis.tick_params(colors=muted, labelsize=9)
+    axis.xaxis.label.set_color(muted)
+    axis.yaxis.label.set_color(muted)
     for spine in axis.spines.values():
-        spine.set_color(GRID)
-    axis.grid(color=GRID, linewidth=0.65, alpha=0.55)
+        spine.set_color(grid)
+    axis.grid(color=grid, linewidth=0.65, alpha=0.75 if plot_theme == "light" else 0.55)
 
 
-def plot_dataset_preview(features: np.ndarray, labels: np.ndarray, title: str = "Dataset preview") -> plt.Figure:
+def plot_dataset_preview(features: np.ndarray, labels: np.ndarray, title: str = "Dataset preview", plot_theme: str = "dark") -> plt.Figure:
     """Create a scatter plot for a two-dimensional labeled dataset."""
     X, y = _validate_plot_data(features, labels)
-    figure, axis = plt.subplots(figsize=(7.0, 5.0), facecolor=NAVY)
-    style_axis(axis, title)
-    for class_index, color, label in ((0, BLUE, "Class 0"), (1, CYAN, "Class 1")):
+    light = plot_theme == "light"
+    figure_background = "#F5EFEB" if light else NAVY
+    figure, axis = plt.subplots(figsize=(7.0, 5.0), facecolor=figure_background)
+    style_axis(axis, title, plot_theme)
+    class_colors = ("#2F4156", "#567C8D") if light else (BLUE, CYAN)
+    for class_index, color, label in ((0, class_colors[0], "Class 0"), (1, class_colors[1], "Class 1")):
         mask = y == class_index
         if np.any(mask):
             axis.scatter(X[mask, 0], X[mask, 1], s=25, c=color, label=label,
                          edgecolors="#ffffff", linewidths=0.35, alpha=0.88)
     axis.set_xlabel("Feature 1")
     axis.set_ylabel("Feature 2")
-    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
+    legend_background, legend_text, legend_edge = ("#FFFFFF", "#2F4156", "#C8D9E6") if light else ("#111a2c", TEXT, GRID)
+    axis.legend(facecolor=legend_background, edgecolor=legend_edge, labelcolor=legend_text)
     figure.tight_layout()
     return figure
 
@@ -51,13 +61,18 @@ def plot_network_architecture(
     input_size: int = 2,
     output_size: int = 1,
     hidden_activation: str = "relu",
+    plot_theme: str = "dark",
 ) -> plt.Figure:
     """Draw fully connected layers and neuron nodes for the configured model."""
     layer_sizes = (input_size, *hidden_layer_sizes, output_size)
     largest_layer = max(layer_sizes)
     figure_height = max(4.0, min(8.0, 3.5 + largest_layer * 0.12))
-    figure, axis = plt.subplots(figsize=(max(6.0, len(layer_sizes) * 1.7), figure_height), facecolor=NAVY)
-    axis.set_facecolor(NAVY)
+    light = plot_theme == "light"
+    figure, axis = plt.subplots(
+        figsize=(max(6.0, len(layer_sizes) * 1.7), figure_height),
+        facecolor="#F5EFEB" if light else NAVY,
+    )
+    axis.set_facecolor("#FFFFFF" if light else NAVY)
     positions: list[list[tuple[float, float]]] = []
     layer_x = np.linspace(0.08, 0.92, len(layer_sizes))
     for x_coord, size in zip(layer_x, layer_sizes):
@@ -67,21 +82,25 @@ def plot_network_architecture(
     for layer_index in range(len(positions) - 1):
         for x1, y1 in positions[layer_index]:
             for x2, y2 in positions[layer_index + 1]:
-                axis.plot([x1, x2], [y1, y2], color="#8596b5", alpha=0.34, linewidth=0.75, zorder=1)
+                axis.plot([x1, x2], [y1, y2], color="#9AAFC2" if light else "#8596b5", alpha=0.55 if light else 0.34, linewidth=0.75, zorder=1)
 
     for layer_index, layer_positions in enumerate(positions):
-        color = BLUE if layer_index == 0 else CYAN if layer_index == len(positions) - 1 else VIOLET
+        color = (
+            ("#2F4156" if layer_index == 0 else "#567C8D" if layer_index == len(positions) - 1 else "#5B8FF9")
+            if light else (BLUE if layer_index == 0 else CYAN if layer_index == len(positions) - 1 else VIOLET)
+        )
         for neuron_index, (x_coord, y_coord) in enumerate(layer_positions):
             radius = min(0.032, 0.3 / max(1, largest_layer - 1))
-            axis.add_patch(Circle((x_coord, y_coord), radius, facecolor=color, edgecolor="#ffffff",
-                                  linewidth=0.8, zorder=3))
+            axis.add_patch(Circle((x_coord, y_coord), radius, facecolor=color,
+                                  edgecolor="#FFFFFF" if not light else "#F5EFEB", linewidth=0.8, zorder=3))
             if layer_index == 0:
-                axis.text(x_coord, y_coord, f"x{neuron_index + 1}", color="#ffffff", fontsize=7,
+                axis.text(x_coord, y_coord, f"x{neuron_index + 1}", color="#FFFFFF", fontsize=7,
                           ha="center", va="center", zorder=4)
     for index, (x_coord, size) in enumerate(zip(layer_x, layer_sizes)):
         label = "Input" if index == 0 else "Output · sigmoid" if index == len(layer_sizes) - 1 else f"Hidden · {hidden_activation}"
+        label_color = ("#2F4156" if index != len(layer_sizes) - 1 else "#567C8D") if light else (TEXT if index != len(layer_sizes) - 1 else CYAN)
         axis.text(x_coord, 0.04, f"{label}\n{size} neuron{'s' if size != 1 else ''}",
-                  color=TEXT if index != len(layer_sizes) - 1 else CYAN, fontsize=8,
+                  color=label_color, fontsize=8,
                   ha="center", va="top")
     axis.set_xlim(0.0, 1.0)
     axis.set_ylim(-0.12, 1.0)
@@ -90,22 +109,24 @@ def plot_network_architecture(
     return figure
 
 
-def plot_loss_history(history: dict[str, list[int | float]]) -> plt.Figure:
+def plot_loss_history(history: dict[str, list[int | float]], plot_theme: str = "dark") -> plt.Figure:
     """Plot actual training and optional validation loss history."""
     epochs = np.asarray(history.get("epoch", []), dtype=int)
     if epochs.size == 0 or len(history.get("training_loss", [])) != epochs.size:
         raise ValueError("history must contain matching non-empty epoch and training_loss values.")
-    figure, axis = plt.subplots(figsize=(8.0, 4.3), facecolor=NAVY)
-    style_axis(axis, "Loss by epoch")
-    axis.plot(epochs, history["training_loss"], color=BLUE, linewidth=2.3, label="Training loss")
+    light = plot_theme == "light"
+    figure, axis = plt.subplots(figsize=(8.0, 4.3), facecolor="#F5EFEB" if light else NAVY)
+    style_axis(axis, "Loss by epoch", plot_theme)
+    axis.plot(epochs, history["training_loss"], color="#2F4156" if light else BLUE, linewidth=2.3, label="Training loss")
     validation = history.get("validation_loss")
     if validation is not None:
         if len(validation) != epochs.size:
             raise ValueError("validation_loss must have one value per epoch.")
-        axis.plot(epochs, validation, color=CYAN, linewidth=2.1, label="Validation loss")
+        axis.plot(epochs, validation, color="#567C8D" if light else CYAN, linewidth=2.1, label="Validation loss")
     axis.set_xlabel("Epoch")
     axis.set_ylabel("Loss")
-    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
+    legend_background, legend_text, legend_edge = ("#FFFFFF", "#2F4156", "#C8D9E6") if light else ("#111a2c", TEXT, GRID)
+    axis.legend(facecolor=legend_background, edgecolor=legend_edge, labelcolor=legend_text)
     figure.tight_layout()
     return figure
 
@@ -158,6 +179,7 @@ def plot_decision_boundary(
     labels: np.ndarray,
     scaler: object | None = None,
     resolution: int = 180,
+    plot_theme: str = "dark",
 ) -> plt.Figure:
     """Plot model-predicted regions and data points in original feature space.
 
@@ -182,14 +204,16 @@ def plot_decision_boundary(
     axis.contourf(grid_x, grid_y, regions, levels=(-0.5, 0.5, 1.5),
                   cmap=ListedColormap(("#5b8cff35", "#a78bfa45")), alpha=0.72)
     style_axis(axis, "Trained model decision boundary")
-    for class_index, color, label in ((0, BLUE, "Class 0"), (1, CYAN, "Class 1")):
+    class_colors = ("#2F4156", "#567C8D") if light else (BLUE, CYAN)
+    for class_index, color, label in ((0, class_colors[0], "Class 0"), (1, class_colors[1], "Class 1")):
         mask = y == class_index
         if np.any(mask):
             axis.scatter(X[mask, 0], X[mask, 1], s=20, c=color, label=label,
                          edgecolors="#ffffff", linewidths=0.4, alpha=0.93)
     axis.set_xlabel("Feature 1")
     axis.set_ylabel("Feature 2")
-    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
+    legend_background, legend_text, legend_edge = ("#FFFFFF", "#2F4156", "#C8D9E6") if light else ("#111a2c", TEXT, GRID)
+    axis.legend(facecolor=legend_background, edgecolor=legend_edge, labelcolor=legend_text)
     figure.tight_layout()
     return figure
 

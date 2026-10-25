@@ -36,20 +36,20 @@ def _select_navigation(section: str) -> None:
 
 with st.sidebar:
     st.markdown(
-        """<div class="brand-lockup">
-            <div class="brand-mark" aria-label="NeuroLab neural network logo">
-                <svg viewBox="0 0 48 48" role="img" aria-hidden="true">
-                    <path d="M12 14 23 24 36 12M12 14l1 20 10-10m0 0 12 12m-12-12 13-12" />
-                    <circle class="node node-blue" cx="12" cy="14" r="4" />
-                    <circle class="node node-cyan" cx="36" cy="12" r="4" />
-                    <circle class="node node-violet" cx="23" cy="24" r="4.5" />
-                    <circle class="node node-cyan" cx="13" cy="34" r="4" />
-                    <circle class="node node-blue" cx="36" cy="36" r="4" />
+        """<div class="brand-lockup" style="display:flex;align-items:center;gap:12px;margin:4px 0 26px;width:100%;">
+            <div class="brand-mark" aria-label="NeuroLab neural network logo" style="flex:0 0 44px;width:44px;height:44px;display:grid;place-items:center;border:1px solid #5B8FF966;border-radius:14px;background:linear-gradient(145deg,#17263F,#29466D);box-shadow:0 7px 18px #101a2b55;">
+                <svg viewBox="0 0 48 48" role="img" aria-hidden="true" style="width:34px;height:34px;overflow:visible;">
+                    <path d="M12 14 23 24 36 12M12 14l1 20 10-10m0 0 12 12m-12-12 13-12" fill="none" stroke="#79A7FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <circle class="node node-blue" cx="12" cy="14" r="4" fill="#5B8FF9" stroke="#DDEBFF" stroke-width="1.5" />
+                    <circle class="node node-cyan" cx="36" cy="12" r="4" fill="#4BD4E8" stroke="#DDEBFF" stroke-width="1.5" />
+                    <circle class="node node-violet" cx="23" cy="24" r="4.5" fill="#A78BFA" stroke="#DDEBFF" stroke-width="1.5" />
+                    <circle class="node node-cyan" cx="13" cy="34" r="4" fill="#4BD4E8" stroke="#DDEBFF" stroke-width="1.5" />
+                    <circle class="node node-blue" cx="36" cy="36" r="4" fill="#5B8FF9" stroke="#DDEBFF" stroke-width="1.5" />
                 </svg>
             </div>
-            <div class="brand-copy">
-                <div class="brand-name">NeuroLab</div>
-                <div class="brand-tagline">Build. Train. Visualize. Understand.</div>
+            <div class="brand-copy" style="display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1;">
+                <div class="brand-name" style="display:block;color:#FFFFFF;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;line-height:1.2;letter-spacing:-.3px;">NeuroLab</div>
+                <div class="brand-tagline" style="display:block;color:#C8D9E6;font-family:'DM Sans',sans-serif;font-size:10px;line-height:1.4;margin-top:4px;">Build. Train. Visualize. Understand.</div>
             </div>
         </div>""",
         unsafe_allow_html=True,

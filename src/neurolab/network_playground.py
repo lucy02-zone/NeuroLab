@@ -68,6 +68,11 @@ def _render_metrics(result: TrainingResult) -> None:
 
 def render_network_playground() -> None:
     """Render dataset controls, architecture, training action, and results."""
+    with st.container(key="network_playground_page"):
+        _render_network_playground_content()
+
+
+def _render_network_playground_content() -> None:
     st.markdown('<div class="eyebrow">CONFIGURE A NETWORK EXPERIMENT</div>', unsafe_allow_html=True)
     st.title("Network Playground")
     st.markdown("Choose a synthetic classification problem, shape a network, and train it with NeuroLab's NumPy engine.")
@@ -99,7 +104,7 @@ def render_network_playground() -> None:
         class_1_fraction, float(circle_factor), float(spiral_turns),
     )
     with data_preview:
-        preview_figure = plot_dataset_preview(features, labels, f"{dataset_label} · {sample_count} samples")
+        preview_figure = plot_dataset_preview(features, labels, f"{dataset_label} · {sample_count} samples", plot_theme="light")
         _show_figure(preview_figure)
 
     st.markdown("### 2 · Network architecture")
@@ -122,7 +127,7 @@ def render_network_playground() -> None:
         )
     with architecture_diagram:
         architecture_figure = plot_network_architecture(
-            hidden_sizes, input_size=2, output_size=1, hidden_activation=ACTIVATIONS[activation_label]
+            hidden_sizes, input_size=2, output_size=1, hidden_activation=ACTIVATIONS[activation_label], plot_theme="light"
         )
         _show_figure(architecture_figure)
         st.caption("Every neuron in one layer connects to every neuron in the next layer.")
@@ -238,7 +243,7 @@ def render_network_playground() -> None:
     _render_metrics(result)
 
     st.markdown("### 5 · Loss curves")
-    loss_figure = plot_loss_history(result.history)
+    loss_figure = plot_loss_history(result.history, plot_theme="light")
     _show_figure(loss_figure)
 
     st.markdown("### 6 · Decision boundary")
@@ -247,6 +252,7 @@ def render_network_playground() -> None:
         saved_run["features"],
         saved_run["labels"],
         scaler=saved_run["scaler"],
+        plot_theme="light",
     )
     _show_figure(boundary_figure)
 
