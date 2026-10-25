@@ -636,10 +636,11 @@ def apply_theme() -> None:
         /* Keep the NeuroLab navigation legible and distinctive on deep navy. */
         [data-testid="stSidebar"], [data-testid="stSidebar"] > div,
         [data-testid="stSidebar"] [data-testid="stSidebarContent"] {
-            background: #17263f !important;
+            background: linear-gradient(180deg, #17263f 0%, #1b2b46 100%) !important;
             border-right: 1px solid #304763 !important;
             color: #ebf4ff !important;
         }
+        [data-testid="stSidebar"] { transition: width 0.2s ease, transform 0.2s ease !important; }
         [data-testid="stSidebar"] .brand-name { color: #ffffff !important; }
         [data-testid="stSidebar"] .brand-tagline { color: #bdcddd !important; }
         [data-testid="stSidebar"] .brand-mark {
@@ -659,12 +660,14 @@ def apply_theme() -> None:
         [data-testid="stSidebar"] .stButton > button {
             background: transparent !important;
             border: 1px solid transparent !important;
+            transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease !important;
         }
         [data-testid="stSidebar"] .stButton > button:hover,
         [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:hover {
             background: #213650 !important;
             border-color: #314b6b !important;
             color: #ffffff !important;
+            transform: translateX(2px);
         }
         [data-testid="stSidebar"] [data-testid="stBaseButton-primary"],
         [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] * {
@@ -676,17 +679,27 @@ def apply_theme() -> None:
             border-color: #426b91 !important;
             box-shadow: inset 3px 0 #49b7c4, 0 5px 14px #08152533 !important;
         }
-        [data-testid="stSidebarCollapseButton"] button {
+        [data-testid="stSidebarCollapseButton"] button,
+        button[data-testid="stSidebarCollapseButton"] {
             border: 1px solid #49627e !important;
             background: #223752 !important;
             color: #f3f6fa !important;
         }
         [data-testid="stSidebarCollapseButton"] button svg,
-        [data-testid="stSidebarCollapseButton"] button svg path {
+        button[data-testid="stSidebarCollapseButton"] svg {
+            display: block !important;
+            width: 1.1rem !important;
+            height: 1.1rem !important;
             color: #f3f6fa !important;
-            fill: #f3f6fa !important;
+            fill: currentColor !important;
         }
-        [data-testid="stSidebarCollapseButton"] button {
+        [data-testid="stSidebarCollapseButton"] button svg path,
+        button[data-testid="stSidebarCollapseButton"] svg path {
+            fill: currentColor !important;
+            stroke: currentColor !important;
+        }
+        [data-testid="stSidebarCollapseButton"] button,
+        button[data-testid="stSidebarCollapseButton"] {
             display: grid !important;
             place-items: center !important;
             width: 2.4rem !important;
@@ -699,18 +712,13 @@ def apply_theme() -> None:
             background: #2a4566 !important;
             color: #ffffff !important;
             box-shadow: 0 3px 9px #08152533 !important;
-            transition: background-color 0.15s ease, border-color 0.15s ease !important;
+            transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease !important;
         }
-        [data-testid="stSidebarCollapseButton"] button svg { display: none !important; }
-        [data-testid="stSidebarCollapseButton"] button::after {
-            content: "×";
-            display: block;
-            color: #ffffff !important;
-            font: 500 1.55rem/1 'DM Sans', sans-serif !important;
-        }
-        [data-testid="stSidebarCollapseButton"] button:hover {
+        [data-testid="stSidebarCollapseButton"] button:hover,
+        button[data-testid="stSidebarCollapseButton"]:hover {
             background: #355575 !important;
             border-color: #7e9bb8 !important;
+            transform: translateY(-1px);
         }
 
         /* Dashboard launch buttons keep one readable color in every click state. */
