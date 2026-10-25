@@ -11,6 +11,7 @@ def test_navigation_contains_requested_sections():
         "Dataset Explorer",
         "Experiment Wizard",
         "Model Manager",
+        "Math Calculator",
         "Network Visualizer",
         "Activation Functions",
         "Loss Functions",

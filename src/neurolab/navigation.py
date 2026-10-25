@@ -9,6 +9,7 @@ NAVIGATION = (
     "Dataset Explorer",
     "Experiment Wizard",
     "Model Manager",
+    "Math Calculator",
     "Network Visualizer",
     "Activation Functions",
     "Loss Functions",
