@@ -17,7 +17,7 @@ MUTED = "#a6b4cb"
 GRID = "#2a3955"
 
 
-def style_axis(axis: plt.Axes, title: str, plot_theme: str = "dark") -> None:
+def style_axis(axis: plt.Axes, title: str, plot_theme: str = "light") -> None:
     """Apply shared NeuroLab colors to a Matplotlib axis."""
     if plot_theme not in {"dark", "light"}:
         raise ValueError("plot_theme must be 'dark' or 'light'.")
@@ -35,7 +35,7 @@ def style_axis(axis: plt.Axes, title: str, plot_theme: str = "dark") -> None:
     axis.grid(color=grid, linewidth=0.65, alpha=0.75 if plot_theme == "light" else 0.55)
 
 
-def plot_dataset_preview(features: np.ndarray, labels: np.ndarray, title: str = "Dataset preview", plot_theme: str = "dark") -> plt.Figure:
+def plot_dataset_preview(features: np.ndarray, labels: np.ndarray, title: str = "Dataset preview", plot_theme: str = "light") -> plt.Figure:
     """Create a scatter plot for a two-dimensional labeled dataset."""
     X, y = _validate_plot_data(features, labels)
     light = plot_theme == "light"
@@ -61,7 +61,7 @@ def plot_network_architecture(
     input_size: int = 2,
     output_size: int = 1,
     hidden_activation: str = "relu",
-    plot_theme: str = "dark",
+    plot_theme: str = "light",
 ) -> plt.Figure:
     """Draw fully connected layers and neuron nodes for the configured model."""
     layer_sizes = (input_size, *hidden_layer_sizes, output_size)
@@ -109,7 +109,7 @@ def plot_network_architecture(
     return figure
 
 
-def plot_loss_history(history: dict[str, list[int | float]], plot_theme: str = "dark") -> plt.Figure:
+def plot_loss_history(history: dict[str, list[int | float]], plot_theme: str = "light") -> plt.Figure:
     """Plot actual training and optional validation loss history."""
     epochs = np.asarray(history.get("epoch", []), dtype=int)
     if epochs.size == 0 or len(history.get("training_loss", [])) != epochs.size:
@@ -135,9 +135,9 @@ def plot_optimizer_history(runs: dict[str, object], metric: str, title: str) -> 
     """Compare one recorded per-epoch metric across optimizer training runs."""
     if not runs:
         raise ValueError("At least one optimizer result is required.")
-    figure, axis = plt.subplots(figsize=(8.0, 4.3), facecolor=NAVY)
-    style_axis(axis, title)
-    colors = {"SGD": BLUE, "Momentum": CYAN, "Adam": VIOLET}
+    figure, axis = plt.subplots(figsize=(8.0, 4.3), facecolor="#F3F6FA")
+    style_axis(axis, title, "light")
+    colors = {"SGD": "#4E73D8", "Momentum": "#49B7C4", "Adam": "#8B79CA"}
     for name, result in runs.items():
         history = result.history
         epochs = np.asarray(history.get("epoch", []), dtype=int)
@@ -147,7 +147,7 @@ def plot_optimizer_history(runs: dict[str, object], metric: str, title: str) -> 
         axis.plot(epochs, values, linewidth=2.2, color=colors.get(name, BLUE), label=name)
     axis.set_xlabel("Epoch")
     axis.set_ylabel("Accuracy" if "accuracy" in metric else "Loss")
-    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#FFFFFF", edgecolor="#D8E2EC", labelcolor="#17263F")
     figure.tight_layout()
     return figure
 
@@ -161,14 +161,14 @@ def plot_optimizer_final_accuracy(runs: dict[str, object]) -> plt.Figure:
     width = 0.36
     training = [runs[name].history["training_accuracy"][-1] for name in names]
     validation = [runs[name].history["validation_accuracy"][-1] for name in names]
-    figure, axis = plt.subplots(figsize=(8.0, 4.0), facecolor=NAVY)
-    style_axis(axis, "Final classification accuracy")
-    axis.bar(positions - width / 2, training, width, color=BLUE, label="Training")
-    axis.bar(positions + width / 2, validation, width, color=CYAN, label="Validation")
-    axis.set_xticks(positions, names, color=MUTED)
+    figure, axis = plt.subplots(figsize=(8.0, 4.0), facecolor="#F3F6FA")
+    style_axis(axis, "Final classification accuracy", "light")
+    axis.bar(positions - width / 2, training, width, color="#4E73D8", label="Training")
+    axis.bar(positions + width / 2, validation, width, color="#49B7C4", label="Validation")
+    axis.set_xticks(positions, names, color="#61758B")
     axis.set_ylim(0.0, 1.0)
     axis.set_ylabel("Accuracy")
-    axis.legend(facecolor="#111a2c", edgecolor=GRID, labelcolor=TEXT)
+    axis.legend(facecolor="#FFFFFF", edgecolor="#D8E2EC", labelcolor="#17263F")
     figure.tight_layout()
     return figure
 
@@ -179,7 +179,7 @@ def plot_decision_boundary(
     labels: np.ndarray,
     scaler: object | None = None,
     resolution: int = 180,
-    plot_theme: str = "dark",
+    plot_theme: str = "light",
 ) -> plt.Figure:
     """Plot model-predicted regions and data points in original feature space.
 
