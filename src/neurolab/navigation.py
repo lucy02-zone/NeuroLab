@@ -7,6 +7,7 @@ NAVIGATION = (
     "Dashboard",
     "Network Playground",
     "Dataset Explorer",
+    "Experiment Wizard",
     "Network Visualizer",
     "Activation Functions",
     "Loss Functions",
